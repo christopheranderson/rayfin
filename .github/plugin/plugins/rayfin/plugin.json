@@ -18,7 +18,7 @@
     "storage",
     "deployment"
   ],
-  "skills": ["skills/rayfin-getting-started", "skills/rayfin"],
+  "skills": ["skills/rayfin-getting-started"],
   "mcpServers": {
     "rayfin": {
       "type": "stdio",
