@@ -5,6 +5,11 @@
     "outDir": "./dist",
     "lib": ["ES2022", "DOM", "DOM.Iterable", "ESNext.Decorators"],
     "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "types": ["vite/client"],
     "tsBuildInfoFile": ".tsbuildinfo"
   },
   "include": ["src/**/*"],
