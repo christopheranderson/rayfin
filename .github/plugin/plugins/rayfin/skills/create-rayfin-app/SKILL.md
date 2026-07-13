@@ -1,6 +1,6 @@
 ---
 name: create-rayfin-app
-description: "Use when starting or creating a NEW Rayfin app, or when a Rayfin task comes up and you are not yet inside a Rayfin project. Gets you into a project with the Rayfin CLI, then hands off to the authoritative, version-locked in-project rayfin skill/MCP/docs that own all in-project work. Triggers: build a Rayfin app, start a Rayfin project, create a new Rayfin app, create-rayfin, npm create @microsoft/rayfin, rayfin init, scaffold rayfin, rayfin CLI, rayfin template, awesome-rayfin gallery, get started with Rayfin"
+description: "Use when starting or creating a NEW Rayfin app, or when a Rayfin task comes up and you are not yet inside a Rayfin project. Gets you into a project with the Rayfin CLI, then hands off to the authoritative, version-locked in-project rayfin skill/MCP/docs that own all in-project work. Triggers: build a Rayfin app, start a Rayfin project, create a new Rayfin app, create-rayfin, npm create @microsoft/rayfin, rayfin init, scaffold rayfin, rayfin CLI, rayfin template, rayfin template gallery, get started with Rayfin"
 metadata:
   author: microsoft
   version: "0.1.0"
@@ -56,21 +56,51 @@ project and continue in place. Never stand up a nested or sibling project.
 run non-interactively (stdin isn't a TTY), so use the `npx -y` form — `npm create` can
 mishandle piped stdin and strip flags, and `--project-name` is **required** non-interactively.
 
+**Always scaffold from this repo's gallery** — `https://github.com/christopheranderson/rayfin`.
+Don't use the CLI's built-in bundled templates; this gallery is the source of truth.
+
+### 1. List what's available (always do this first)
+
+The gallery's templates live in `rayfin-template.yml` at the repo root. `--list-templates`
+only reports the CLI's built-ins, so read the gallery manifest directly instead:
+
 ```bash
-# List built-in gallery templates (JSON), then create from the closest fit
-npx -y @microsoft/create-rayfin@latest --list-templates
-
-# Create non-interactively — --project-name required; --template takes a slug
-# (e.g. dataapp, gettingstartedauth), not a display name
-npx -y @microsoft/create-rayfin@latest --project-name <app-name> --template <slug>
-
-# Or add Rayfin into an existing/empty directory
-npx rayfin init [directory]
+# List the current gallery templates (name + description)
+curl -fsSL https://raw.githubusercontent.com/christopheranderson/rayfin/main/rayfin-template.yml
 ```
 
-Prefer a gallery template matching the user's domain (events, field service, todo, CRUD) over
-an empty project — it ships a working data model, auth, and UI. Mind the project root before
-loading the in-project skill: `create-rayfin` creates a child project directory (named from
-`--project-name`, slugified), so `cd` into it; an in-place `rayfin init` scaffolds in the
-current directory, so you're already there. Once at the project root, load its
-`.agents/skills/rayfin/SKILL.md`.
+Each `entries[].name` is a selectable template name. As of now the gallery ships:
+
+- **CRUD App** — basic todo CRUD app (data model, Fabric auth, functions), on `@experimental` Rayfin packages
+- **Data App** — visual-heavy analytics dashboard on Microsoft Fabric data and semantic models
+
+Always re-read the manifest rather than trusting this list — entries change over time.
+
+### 2. Create from the closest-fit template
+
+```bash
+# Create non-interactively from the gallery.
+# --project-name is required; --template-name picks one entry by its `name`.
+npx -y @microsoft/create-rayfin@latest \
+  --project-name <app-name> \
+  --template https://github.com/christopheranderson/rayfin \
+  --template-name "<Template Name>"
+
+# e.g. the CRUD todo starter:
+npx -y @microsoft/create-rayfin@latest \
+  --project-name my-todos \
+  --template https://github.com/christopheranderson/rayfin \
+  --template-name "CRUD App"
+```
+
+Pick the gallery template that matches the user's domain (a dashboard / analytics / Fabric
+request → **Data App**; a CRUD / todo / records app → **CRUD App**). `--template-name` matches
+an entry's `name` from the manifest exactly (e.g. `"CRUD App"`, `"Data App"`).
+
+To add Rayfin into an existing non-Rayfin app in place, use `npx rayfin init [directory]`
+instead of scaffolding a separate project.
+
+Mind the project root before loading the in-project skill: `create-rayfin` creates a child
+project directory (named from `--project-name`, slugified), so `cd` into it; an in-place
+`rayfin init` scaffolds in the current directory, so you're already there. Once at the project
+root, load its `.agents/skills/rayfin/SKILL.md`.
