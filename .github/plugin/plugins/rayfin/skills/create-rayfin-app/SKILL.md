@@ -15,6 +15,8 @@ Rayfin provides auth, a typed data API, storage, and Fabric hosting.
 
 Your goal is to help the user build an app with Rayfin. If you're GitHub Copilot app or VS Code, open an embedded browser and show the app to the user, so they can interact with it directly. If you don't have an embedded webview, still open a system browser and ask the user for screenshots, as appropriate, to fix things or add features.
 
+You want to get the local development environment set up as quickly as possible. Don't ask too many questions; focus on the essential steps to scaffold and initialize the project. After the dev environment is ready, you can then move on to building features or interacting with the app itself. You shouldn't need to modify any code until the dev environment is already running (i.e. after step 3).
+
 ## Scaffold a new project
 
 `npm create @microsoft/rayfin@experimental` is a thin wrapper around `rayfin init`. As an agent you
