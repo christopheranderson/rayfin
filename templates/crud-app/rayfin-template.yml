@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: template
+metadata:
+    name: crud-app
+    displayName: CRUD App
+    description: Basic todo CRUD app on Rayfin (data model, Fabric auth, functions), optimized for GitHub Copilot app and built on @experimental Rayfin packages
+    version: 0.0.1
+entries:
+    - name: CRUD App
+      path: .

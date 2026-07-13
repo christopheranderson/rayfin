@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: template
+metadata:
+    name: data-app
+    displayName: Data App
+    description: Build a visual-heavy analytics dashboard on your Microsoft Fabric data and semantic models, optimized for GitHub Copilot app
+    version: 0.0.1
+entries:
+    - name: Data App
+      path: .

@@ -1,0 +1,12 @@
+apiVersion: v1
+metadata:
+  name: rayfin-templates
+  displayName: Rayfin Templates
+  description: Template gallery for Project Rayfin, optimized for the GitHub Copilot app
+entries:
+  - path: templates/crud-app
+    name: CRUD App
+    description: Basic todo CRUD app on Rayfin — data model, Fabric auth, and functions — optimized for GitHub Copilot app and built on @experimental Rayfin packages
+  - path: templates/data-app
+    name: Data App
+    description: Visual-heavy analytics dashboard built on your Microsoft Fabric data and semantic models, optimized for GitHub Copilot app

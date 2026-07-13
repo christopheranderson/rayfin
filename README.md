@@ -26,6 +26,19 @@ npm create @microsoft/rayfin@latest
 
 This CLI scaffolds a new Rayfin project with everything you need: data models, authentication, APIs, and a ready-to-deploy app.
 
+## Templates
+
+This repo doubles as a template gallery. Point the Rayfin CLI at it to scaffold any template below; the CLI reads [`rayfin-template.yml`](rayfin-template.yml) and shows an interactive picker when multiple templates are available.
+
+```bash
+npm create @microsoft/rayfin -- --template https://github.com/christopheranderson/rayfin
+```
+
+| Template | Description | Stack |
+|----------|-------------|-------|
+| [**CRUD App**](templates/crud-app) | Basic todo CRUD app on Rayfin — data model, Fabric auth, and functions — optimized for GitHub Copilot app and built on `@experimental` Rayfin packages | React, Vite, TypeScript |
+| [**Data App**](templates/data-app) | Visual-heavy analytics dashboard built on your Microsoft Fabric data and semantic models, optimized for GitHub Copilot app | React, Vite, Fabric |
+
 ## What is Rayfin?
 
 Rayfin is a **fully managed Backend-as-a-Service (BaaS)** platform that helps teams build and ship applications faster without building or operating backend infrastructure.

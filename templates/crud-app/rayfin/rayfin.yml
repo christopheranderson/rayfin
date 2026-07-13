@@ -1,0 +1,31 @@
+id: workspace-todo-app
+name: workspace-todo-app
+version: 1.0.0
+services:
+  auth:
+    enabled: true
+    allowedRedirectUris:
+      - http://localhost:5173
+      - http://localhost:5173/auth/callback
+    fabric:
+      enabled: true
+    password:
+      enabled: true
+  data:
+    enabled: true
+    dialect: mssql
+    path: packages/data
+    buildCommand: npm run build
+  storage:
+    enabled: false
+  staticHosting:
+    enabled: true
+    path: packages/frontend
+    folder: dist
+    buildCommand: npm run build:fabric
+    indexDocument: index.html
+  functions:
+    enabled: false
+    path: packages/functions
+    buildCommand: npm run build
+
