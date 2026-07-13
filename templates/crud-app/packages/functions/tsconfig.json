@@ -8,6 +8,6 @@
     "tsBuildInfoFile": ".tsbuildinfo"
   },
   "include": ["src/**/*"],
-  "exclude": ["dist", "node_modules"],
+  "exclude": ["dist", "node_modules", "./src/types.ts"],
   "references": [{ "path": "../shared" }, { "path": "../data" }]
 }

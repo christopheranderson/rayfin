@@ -6,15 +6,17 @@
   "scripts": {
     "predev": "rayfin env --framework vite",
     "prebuild": "rayfin env --framework vite",
-    "dev": "vite",
+    "dev": "vite --open",
     "build": "tsc -b && vite build",
     "build:fabric": "tsc -b && vite build"
   },
   "dependencies": {
     "@workspace-todo-app/shared": "*",
-    "@workspace-todo-app/data": "*"
+    "@workspace-todo-app/data": "*",
+    "@workspace-todo-app/functions": "*"
   },
   "devDependencies": {
+    "@workspace-todo-app/local-dev": "*",
     "typescript": "^5.8.3"
   }
 }

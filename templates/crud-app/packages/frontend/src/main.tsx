@@ -1,3 +1,4 @@
+import { createSessionFromTokenResponse } from '@microsoft/rayfin-auth/_internal';
 import {
   ensureSignedInWithFabric,
   bridgeFabricCallback,
@@ -6,6 +7,15 @@ import {
 import { RayfinClient } from '@microsoft/rayfin-client';
 import type { TodoAppSchema } from '@workspace-todo-app/data';
 import type { Todo } from '@workspace-todo-app/data';
+import type { TodoFunctionsSchema } from '@workspace-todo-app/functions';
+import {
+  resolveRayfinConfig,
+  isLocalDev,
+  hydrateFabricSessionFromProxy,
+  hydrateFabricSessionFromProxyIfCached,
+  fabricProxyLogout,
+  type FabricProxyOptions,
+} from '@workspace-todo-app/local-dev';
 import type { Image } from '@workspace-todo-app/shared';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -13,8 +23,12 @@ import { createRoot } from 'react-dom/client';
 // ---------------------------------------------------------------------------
 // Config
 // ---------------------------------------------------------------------------
-const apiUrl = import.meta.env.VITE_RAYFIN_API_URL || 'http://localhost:5168';
-const publishableKey = import.meta.env.VITE_RAYFIN_PUBLISHABLE_KEY || '';
+// `resolveRayfinConfig()` picks the backend base URL for the current runtime:
+//   • local dev (vite)   → same-origin '/.rayfin' (proxied by rayfinLocalDev)
+//   • production build    → absolute VITE_RAYFIN_API_URL (existing mechanism)
+// Function calls use the SDK's default path either way; in dev the proxy decides
+// whether each one runs against a local `func` host or the remote backend.
+const { baseUrl, publishableKey } = resolveRayfinConfig();
 
 const ALLOWED_IMAGE_MIMES = new Set([
   'image/png',
@@ -30,8 +44,8 @@ function sanitizeMime(mime: string | null): string {
   return 'image/png';
 }
 
-const client = new RayfinClient<TodoAppSchema>({
-  baseUrl: apiUrl.endsWith('/') ? apiUrl : `${apiUrl}/`,
+const client = new RayfinClient<TodoAppSchema, TodoFunctionsSchema>({
+  baseUrl,
   publishableKey,
 });
 
@@ -45,6 +59,18 @@ function getFabricOptions(): FabricAuthOptions | null {
     projectId,
     fabricPortalUrl,
     returnOrigin: window.location.origin,
+  };
+}
+
+// Same Fabric config, shaped for the dev-server auth proxy. The proxy's bridge
+// falls back to these same VITE_* vars, but passing them through keeps the
+// system-browser login config-driven from the app side.
+function getFabricProxyOptions(): FabricProxyOptions {
+  return {
+    workspaceId: import.meta.env.VITE_FABRIC_WORKSPACE_ID,
+    projectId: import.meta.env.VITE_FABRIC_ITEM_ID,
+    portalUrl: import.meta.env.VITE_FABRIC_PORTAL_URL,
+    publishableKey,
   };
 }
 
@@ -332,6 +358,28 @@ function LoginPage({ onLogin }: { onLogin: () => void }) {
     }
   };
 
+  // WebView-friendly login: hands off to the dev-server auth proxy, which opens
+  // the *system* browser to complete the real Fabric login (passkeys/SSO work
+  // there), caches the raw Rayfin token, and returns it here. We then hydrate
+  // the SDK session via the supported companion entry point.
+  const handleProxyLogin = async () => {
+    setError(null);
+    setBusy(true);
+    try {
+      await hydrateFabricSessionFromProxy(
+        (token) => createSessionFromTokenResponse(client.auth, token),
+        getFabricProxyOptions()
+      );
+      onLogin();
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : 'System-browser sign-in failed'
+      );
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <div style={{ ...s.page, ...s.loginWrapper }}>
       <div style={s.loginCard}>
@@ -354,16 +402,34 @@ function LoginPage({ onLogin }: { onLogin: () => void }) {
           </div>
         )}
         {fabricOptions ? (
-          <button
-            onClick={handleFabricLogin}
-            disabled={busy}
-            style={{
-              ...s.btnPrimary,
-              ...(busy ? { opacity: 0.5, cursor: 'not-allowed' } : {}),
-            }}
-          >
-            {busy ? 'Signing in…' : 'Sign in with Fabric'}
-          </button>
+          <>
+            <button
+              onClick={handleFabricLogin}
+              disabled={busy}
+              style={{
+                ...s.btnPrimary,
+                ...(busy ? { opacity: 0.5, cursor: 'not-allowed' } : {}),
+              }}
+            >
+              {busy ? 'Signing in…' : 'Sign in with Fabric'}
+            </button>
+            {isLocalDev() && (
+              <button
+                onClick={handleProxyLogin}
+                disabled={busy}
+                style={{
+                  ...s.btnPrimary,
+                  background: 'transparent',
+                  color: colors.accent,
+                  border: `1px solid ${colors.accent}`,
+                  marginTop: 12,
+                  ...(busy ? { opacity: 0.5, cursor: 'not-allowed' } : {}),
+                }}
+              >
+                {busy ? 'Waiting for browser…' : 'Sign in via system browser'}
+              </button>
+            )}
+          </>
         ) : (
           <div
             style={{
@@ -608,20 +674,39 @@ function TodoPage({ onLogout }: { onLogout: () => void }) {
       prev.map((t) => (t.id === todo.id ? { ...t, isCompleted: updated } : t))
     );
     try {
-      await client.data.Todo.update(
-        { id: todo.id },
-        {
-          isCompleted: updated,
-          percentComplete: updated ? 100 : 0,
-          updatedAt: new Date(),
-        }
-      );
+      if (updated) {
+        // Completing a todo runs through the `completeTodo` function. In local
+        // dev the Vite proxy routes this to the `func` host when it's up
+        // (otherwise the deployed function); the app code is identical either
+        // way. This is the frontend actually invoking a Rayfin function.
+        await client.functions.completeTodo.invoke({ todoId: todo.id });
+      } else {
+        // Re-opening a todo is a plain data update — no function involved.
+        await client.data.Todo.update(
+          { id: todo.id },
+          { isCompleted: false, percentComplete: 0, updatedAt: new Date() }
+        );
+      }
     } catch {
-      setTodos((prev) =>
-        prev.map((t) =>
-          t.id === todo.id ? { ...t, isCompleted: !updated } : t
-        )
-      );
+      // If the function path is unavailable (no local host running and the
+      // function isn't deployed), fall back to a direct data update so the
+      // checkbox still works during the demo.
+      try {
+        await client.data.Todo.update(
+          { id: todo.id },
+          {
+            isCompleted: updated,
+            percentComplete: updated ? 100 : 0,
+            updatedAt: new Date(),
+          }
+        );
+      } catch {
+        setTodos((prev) =>
+          prev.map((t) =>
+            t.id === todo.id ? { ...t, isCompleted: !updated } : t
+          )
+        );
+      }
     }
   };
 
@@ -637,7 +722,26 @@ function TodoPage({ onLogout }: { onLogout: () => void }) {
 
   const handleLogout = async () => {
     await client.auth.signOut();
+    // In local dev, also evict the auth proxy's cached token so the next login
+    // re-runs the system-browser flow instead of returning a stale session.
+    if (isLocalDev()) {
+      await fabricProxyLogout().catch(() => {});
+    }
     onLogout();
+  };
+
+  // Minimal functions-invocation demo. Locally this call is routed by the Vite
+  // proxy to a running `func` host when one is up, otherwise to the remote
+  // backend — the app code is identical either way.
+  const runHealthCheck = async () => {
+    try {
+      const result = await client.functions.healthCheck.invoke({});
+      window.alert(`healthCheck → ok=${result.ok}\n${result.timestamp}`);
+    } catch (err) {
+      window.alert(
+        `healthCheck failed: ${err instanceof Error ? err.message : String(err)}`
+      );
+    }
   };
 
   const completed = todos.filter((t) => t.isCompleted).length;
@@ -665,9 +769,14 @@ function TodoPage({ onLogout }: { onLogout: () => void }) {
               )}
             </h1>
           </div>
-          <button onClick={handleLogout} style={s.btnGhost}>
-            Sign Out
-          </button>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button onClick={runHealthCheck} style={s.btnGhost} type="button">
+              Health check
+            </button>
+            <button onClick={handleLogout} style={s.btnGhost}>
+              Sign Out
+            </button>
+          </div>
         </header>
 
         <AddTodoForm onCreated={handleCreated} />
@@ -789,15 +898,49 @@ function App() {
   const [authenticated, setAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const fabricOptions = getFabricOptions();
-    if (fabricOptions) {
-      ensureSignedInWithFabric(client.auth, fabricOptions)
-        .then(() => setAuthenticated(true))
-        .catch(() => setAuthenticated(false));
-    } else {
-      const session = client.auth.getSession();
-      setAuthenticated(session.isAuthenticated);
+    let cancelled = false;
+    const finish = (ok: boolean) => {
+      if (!cancelled) setAuthenticated(ok);
+    };
+
+    async function bootstrap(): Promise<void> {
+      // Already have a live SDK session (e.g. persisted across a reload)?
+      if (client.auth.getSession().isAuthenticated) return finish(true);
+
+      // Local dev: silently restore from the dev-server auth-proxy cache so a
+      // page refresh reuses the token captured during the system-browser login
+      // instead of forcing a new login. This never opens a browser — on a cache
+      // miss it just shows the login page (the button does the interactive login).
+      if (isLocalDev()) {
+        try {
+          const restored = await hydrateFabricSessionFromProxyIfCached(
+            (token) => createSessionFromTokenResponse(client.auth, token),
+            getFabricProxyOptions()
+          );
+          return finish(restored !== null);
+        } catch {
+          return finish(false);
+        }
+      }
+
+      // Production / in-WebView Fabric login path.
+      const fabricOptions = getFabricOptions();
+      if (fabricOptions) {
+        try {
+          await ensureSignedInWithFabric(client.auth, fabricOptions);
+          return finish(true);
+        } catch {
+          return finish(false);
+        }
+      }
+
+      finish(client.auth.getSession().isAuthenticated);
     }
+
+    void bootstrap();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleLogin = useCallback(() => setAuthenticated(true), []);

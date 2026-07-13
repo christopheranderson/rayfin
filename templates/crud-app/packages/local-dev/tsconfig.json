@@ -4,15 +4,9 @@
     "rootDir": "./src",
     "outDir": "./dist",
     "lib": ["ES2022", "DOM", "DOM.Iterable", "ESNext.Decorators"],
-    "jsx": "react-jsx",
+    "types": ["node"],
     "tsBuildInfoFile": ".tsbuildinfo"
   },
   "include": ["src/**/*"],
-  "exclude": ["dist", "node_modules"],
-  "references": [
-    { "path": "../shared" },
-    { "path": "../data" },
-    { "path": "../functions" },
-    { "path": "../local-dev" }
-  ]
+  "exclude": ["dist", "node_modules"]
 }

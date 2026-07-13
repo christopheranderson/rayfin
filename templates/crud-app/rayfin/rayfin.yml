@@ -25,7 +25,7 @@ services:
     buildCommand: npm run build:fabric
     indexDocument: index.html
   functions:
-    enabled: false
+    enabled: true
     path: packages/functions
     buildCommand: npm run build
 

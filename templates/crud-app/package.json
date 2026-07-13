@@ -7,10 +7,15 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run -w @workspace-todo-app/shared build && npm run -w @workspace-todo-app/data build && npm run -w @workspace-todo-app/functions build && npm run -w @workspace-todo-app/frontend build",
-    "dev": "rayfin up --exclude-services staticHosting && npm run -w @workspace-todo-app/frontend dev"
+    "build": "npm run -w @workspace-todo-app/shared build && npm run -w @workspace-todo-app/data build && npm run -w @workspace-todo-app/functions build && npm run -w @workspace-todo-app/local-dev build && npm run -w @workspace-todo-app/frontend build",
+    "dev": "rayfin up --exclude-services staticHosting,functions && concurrently --kill-others \"npm run dev:frontend\" \"npm run build:watch\" \"npm run dev:functions\"",
+    "deploy": "rayfin up",
+    "build:watch": "npm run -w @workspace-todo-app/functions build:watch",
+    "dev:frontend": "npm run -w @workspace-todo-app/frontend dev",
+    "dev:functions": "npm run -w @workspace-todo-app/functions dev"
   },
   "dependencies": {
+    "@microsoft/rayfin-auth": "experimental",
     "@microsoft/rayfin-auth-provider-fabric": "experimental",
     "@microsoft/rayfin-client": "experimental",
     "@microsoft/rayfin-core": "experimental",
@@ -26,6 +31,7 @@
     "@types/react-dom": "^19.2.2",
     "@vitejs/plugin-react": "^4.6.0",
     "typescript": "^5.8.3",
-    "vite": "^7.3.2"
+    "vite": "^7.3.2",
+    "concurrently": "^10.0.3"
   }
 }

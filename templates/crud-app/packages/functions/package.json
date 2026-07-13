@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "main": "dist/src/function_app.js",
   "exports": {
     ".": {
       "import": "./dist/src/index.js",
@@ -10,13 +11,17 @@
     }
   },
   "scripts": {
-    "build": "tsc -b"
+    "build": "tsc -b",
+    "build:watch": "tsc -b --watch",
+    "dev": "rayfin dev functions apply"
   },
   "dependencies": {
-    "@workspace-todo-app/data": "*"
+    "@workspace-todo-app/data": "*",
+    "@microsoft/fabric-user-data-functions": "experimental"
   },
   "devDependencies": {
     "typescript": "^5.8.3",
-    "@types/node": "^20.4.2"
+    "@types/node": "^20.4.2",
+    "@microsoft/rayfin-cli": "experimental"
   }
 }
