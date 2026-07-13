@@ -11,47 +11,9 @@ metadata:
 Rayfin is a Backend-as-a-Service: define your data model with TypeScript decorators and
 Rayfin provides auth, a typed data API, storage, and Fabric hosting.
 
-This skill only handles *getting started* — getting you from zero into a working Rayfin
-project, then handing off. For all Rayfin specific topics, the authoritative, version-locked
-skill at `.agents/skills/rayfin/SKILL.md` — alongside the `rayfin` MCP and `rayfin docs` —
-owns everything else: schema, auth, storage, querying, deployment. 
-
-## Route, don't improvise
-
-Rayfin's specifics are version-locked per project — schema/decorator syntax, the typed data
-API and client queries, auth, storage, and deployment all live in the project's own skill,
-MCP, and `rayfin docs`. Never answer them from memory; remembered Rayfin APIs are routinely
-wrong against the installed version. Get into a project, read `.agents/skills/rayfin/SKILL.md`,
-then follow it for version-matched signatures. The in-project skill **file** and the
-`rayfin docs` CLI are available the moment a project exists — including right after you
-scaffold one, in the same session. The `rayfin` MCP is an extra convenience that may only
-come online once the tool reloads the new project, so don't wait on it: lean on the
-in-project skill file plus `rayfin docs`.
-
-Being blocked does not unlock memory. Only treat yourself as blocked if you can reach **none**
-of the version-matched sources — you can't read `.agents/skills/rayfin/SKILL.md` *and* can't
-run `rayfin docs` (e.g. tool permissions denied). The `rayfin` MCP simply not being loaded yet
-is **not** a blocker. When genuinely blocked, say you need those sources to answer accurately
-and stop there — don't offer a "general approach" or example code "in the meantime"; that
-stopgap is exactly the fabrication this skill exists to prevent.
-
 ## Show the app; be app centric
 
 Your goal is to help the user build an app with Rayfin. If you're GitHub Copilot app or VS Code, open an embedded browser and show the app to the user, so they can interact with it directly. If you don't have an embedded webview, still open a system browser and ask the user for screenshots, as appropriate, to fix things or add features.
-
-## Already in a Rayfin project?
-
-Check this first — before scaffolding anything, even when the user says "build" or "set up a
-new app". A directory is a Rayfin project if it has `rayfin/rayfin.yml` or a `package.json`
-depending on `@microsoft/rayfin-*`. Environment signals alone are enough: if the workspace
-context shows either — even when you can't open the files yet — treat it as an existing
-project and continue in place. Never stand up a nested or sibling project.
-
-- **Already in one →** load `.agents/skills/rayfin/SKILL.md` and use the `rayfin` MCP /
-  `rayfin docs`. Stop using this skill.
-- **Existing non-Rayfin app here →** add Rayfin in place with `npx rayfin init` (don't
-  scaffold a separate project), then load the in-project skill.
-- **Empty directory →** scaffold (below), then load the in-project skill from the project root.
 
 ## Scaffold a new project
 
