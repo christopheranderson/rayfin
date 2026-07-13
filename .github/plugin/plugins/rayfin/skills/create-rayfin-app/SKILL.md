@@ -12,10 +12,9 @@ Rayfin is a Backend-as-a-Service: define your data model with TypeScript decorat
 Rayfin provides auth, a typed data API, storage, and Fabric hosting.
 
 This skill only handles *getting started* — getting you from zero into a working Rayfin
-project, then handing off. The moment you're in a project, the authoritative, version-locked
+project, then handing off. For all Rayfin specific topics, the authoritative, version-locked
 skill at `.agents/skills/rayfin/SKILL.md` — alongside the `rayfin` MCP and `rayfin docs` —
-owns everything else: schema, auth, storage, querying, deployment. Load it and stop using
-this one.
+owns everything else: schema, auth, storage, querying, deployment. 
 
 ## Route, don't improvise
 
@@ -36,6 +35,10 @@ is **not** a blocker. When genuinely blocked, say you need those sources to answ
 and stop there — don't offer a "general approach" or example code "in the meantime"; that
 stopgap is exactly the fabrication this skill exists to prevent.
 
+## Show the app; be app centric
+
+Your goal is to help the user build an app with Rayfin. If you're GitHub Copilot app or VS Code, open an embedded browser and show the app to the user, so they can interact with it directly. If you don't have an embedded webview, still open a system browser and ask the user for screenshots, as appropriate, to fix things or add features.
+
 ## Already in a Rayfin project?
 
 Check this first — before scaffolding anything, even when the user says "build" or "set up a
@@ -52,7 +55,7 @@ project and continue in place. Never stand up a nested or sibling project.
 
 ## Scaffold a new project
 
-`npm create @microsoft/rayfin@latest` is a thin wrapper around `rayfin init`. As an agent you
+`npm create @microsoft/rayfin@experimental` is a thin wrapper around `rayfin init`. As an agent you
 run non-interactively (stdin isn't a TTY), so use the `npx -y` form — `npm create` can
 mishandle piped stdin and strip flags, and `--project-name` is **required** non-interactively.
 
@@ -81,13 +84,13 @@ Always re-read the manifest rather than trusting this list — entries change ov
 ```bash
 # Create non-interactively from the gallery.
 # --project-name is required; --template-name picks one entry by its `name`.
-npx -y @microsoft/create-rayfin@latest \
+npx -y @microsoft/create-rayfin@experimental \
   --project-name <app-name> \
   --template https://github.com/christopheranderson/rayfin \
   --template-name "<Template Name>"
 
 # e.g. the CRUD todo starter:
-npx -y @microsoft/create-rayfin@latest \
+npx -y @microsoft/create-rayfin@experimental \
   --project-name my-todos \
   --template https://github.com/christopheranderson/rayfin \
   --template-name "CRUD App"
@@ -102,5 +105,25 @@ instead of scaffolding a separate project.
 
 Mind the project root before loading the in-project skill: `create-rayfin` creates a child
 project directory (named from `--project-name`, slugified), so `cd` into it; an in-place
-`rayfin init` scaffolds in the current directory, so you're already there. Once at the project
-root, load its `.agents/skills/rayfin/SKILL.md`.
+`rayfin init` scaffolds in the current directory, so you're already there. 
+
+### 3. Prep the hybrid local dev environment
+
+The hybrid local dev environment consists of some local services and some remote services. The local dev environment runs vite for the frontend and `rayfin dev functions apply` for the backend functions. The remote services are deployed via `rayfin up`. The first time we run `rayfin up` in a new dev environment, we will also need to select a workspace.
+
+1. Understand: Review the root package.json to understand which scripts are there; also note if the project is a workspace. Review the ./rayfin/rayfin.yml to understand what features of Rayfin are being used.
+2. Build: If the package.json has a build command, run it, e.g. `npm run build`
+3. Login: Confirm the user is logged in to rayfin, e.g. `npx rayfin login status`. If the user is not logged in, use `npx rayfin login` to authenticate.
+4. Select workspace: Ask the user the name of the Fabric workspace they want to use.
+5. Deploy: Run `npx rayfin up --exclude-services staticHosting,functions --workspace <workspace-name>` to deploy the remote services while keeping the local services running.
+6. Run local dev: Start the local services with `npm run dev:local-services` to run the frontend and backend functions locally while the remote services are running.
+7. Open browser: If you have an embedded browser, open the frontend URL (usually `http://localhost:5173`) to view the application while the local and remote services are running. Otherwise, open a system browser to `http://localhost:5173`.
+  - if localhost:5173 is taken or vite uses another port for some reason, you'll need to update the URL in the ./rayfin/rayfin.yml under the auth config section.
+
+### 4. Build
+
+Interview the customer for details about what kind of app they want, key features, and proposed workflow or user interactions to understand the requirements for the application.
+
+For any changes to Rayfin specific features, use the rayfin skill located at `.agents/skills/rayfin/SKILL.md` within the project directory. The rayfin docs are available as an mcp tool, `@microsoft/rayfin-mcp`.
+
+Create a plan, review with the user, and execute it.

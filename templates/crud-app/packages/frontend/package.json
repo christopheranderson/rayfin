@@ -6,7 +6,7 @@
   "scripts": {
     "predev": "rayfin env --framework vite",
     "prebuild": "rayfin env --framework vite",
-    "dev": "vite --open",
+    "dev": "vite",
     "build": "tsc -b && vite build",
     "build:fabric": "tsc -b && vite build"
   },

@@ -8,8 +8,9 @@
   ],
   "scripts": {
     "build": "npm run -w @workspace-todo-app/shared build && npm run -w @workspace-todo-app/data build && npm run -w @workspace-todo-app/functions build && npm run -w @workspace-todo-app/local-dev build && npm run -w @workspace-todo-app/frontend build",
-    "dev": "rayfin up --exclude-services staticHosting,functions && concurrently --kill-others \"npm run dev:frontend\" \"npm run build:watch\" \"npm run dev:functions\"",
     "deploy": "rayfin up",
+    "dev": "rayfin up --exclude-services staticHosting,functions && npm run dev:local-services",
+    "dev:local-services": "concurrently --kill-others \"npm run dev:frontend\" \"npm run build:watch\" \"npm run dev:functions\"",
     "build:watch": "npm run -w @workspace-todo-app/functions build:watch",
     "dev:frontend": "npm run -w @workspace-todo-app/frontend dev",
     "dev:functions": "npm run -w @workspace-todo-app/functions dev"
