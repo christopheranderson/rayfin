@@ -7,6 +7,7 @@ services:
     allowedRedirectUris:
       - http://localhost:5173
       - http://localhost:5173/auth/callback
+      - http://localhost:5173/.rayfin-local/auth/fabric-proxy/bridge
     fabric:
       enabled: true
     password:
