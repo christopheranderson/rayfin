@@ -16,17 +16,17 @@
     "dev:functions": "npm run -w @workspace-todo-app/functions dev"
   },
   "dependencies": {
-    "@microsoft/rayfin-auth": "experimental",
-    "@microsoft/rayfin-auth-provider-fabric": "experimental",
-    "@microsoft/rayfin-client": "experimental",
-    "@microsoft/rayfin-core": "experimental",
-    "@microsoft/rayfin-data": "experimental",
-    "@microsoft/rayfin-functions": "experimental",
+    "@microsoft/rayfin-auth": "1.34.0-alpha.1201",
+    "@microsoft/rayfin-auth-provider-fabric": "1.34.0-alpha.1201",
+    "@microsoft/rayfin-client": "1.34.0-alpha.1201",
+    "@microsoft/rayfin-core": "1.34.0-alpha.1201",
+    "@microsoft/rayfin-data": "1.34.0-alpha.1201",
+    "@microsoft/rayfin-functions": "1.34.0-alpha.1201",
     "react": "^19.2.1",
     "react-dom": "^19.2.1"
   },
   "devDependencies": {
-    "@microsoft/rayfin-cli": "experimental",
+    "@microsoft/rayfin-cli": "1.34.0-alpha.1201",
     "@types/node": "^20.4.2",
     "@types/react": "~19.2.7",
     "@types/react-dom": "^19.2.2",

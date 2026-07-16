@@ -17,11 +17,11 @@
   },
   "dependencies": {
     "@workspace-todo-app/data": "*",
-    "@microsoft/fabric-user-data-functions": "experimental"
+    "@microsoft/fabric-user-data-functions": "1.34.0-alpha.1201"
   },
   "devDependencies": {
     "typescript": "^5.8.3",
     "@types/node": "^20.4.2",
-    "@microsoft/rayfin-cli": "experimental"
+    "@microsoft/rayfin-cli": "1.34.0-alpha.1201"
   }
 }
