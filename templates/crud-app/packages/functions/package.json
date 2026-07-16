@@ -13,7 +13,7 @@
   "scripts": {
     "build": "tsc -b",
     "build:watch": "tsc -b --watch",
-    "dev": "rayfin dev functions apply"
+    "dev": "cross-env FUNCTIONS_ENABLED=true rayfin dev functions apply"
   },
   "dependencies": {
     "@workspace-todo-app/data": "*",
@@ -22,6 +22,7 @@
   "devDependencies": {
     "typescript": "^5.8.3",
     "@types/node": "^20.4.2",
-    "@microsoft/rayfin-cli": "1.34.0-alpha.1201"
+    "@microsoft/rayfin-cli": "1.34.0-alpha.1201",
+    "cross-env": "^10.1.0"
   }
 }
