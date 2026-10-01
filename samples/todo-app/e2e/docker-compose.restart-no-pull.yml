@@ -1,0 +1,16 @@
+# E2E cold restarts reuse images proven by the initial successful backend start.
+services:
+  webservice:
+    pull_policy: never
+  admin-db:
+    pull_policy: never
+  maildev:
+    pull_policy: never
+  sqlserver:
+    pull_policy: never
+  postgres-dataapi:
+    pull_policy: never
+  azurite:
+    pull_policy: never
+  aspire-dashboard:
+    pull_policy: never

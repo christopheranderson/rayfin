@@ -1,0 +1,36 @@
+{
+  "name": "notes-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "prebuild": "rayfin env --framework vite",
+    "dev": "rayfin dev",
+    "dev:frontend": "vite",
+    "dev:fabric": "vite",
+    "build": "tsc --build",
+    "build:fabric": "tsc -b && vite build",
+    "clean": "rimraf tsconfig.tsbuildinfo && rimraf rayfin/.temp/compiled"
+  },
+  "dependencies": {
+    "@microsoft/rayfin-client": "workspace:*",
+    "@microsoft/rayfin-core": "workspace:*",
+    "@microsoft/rayfin-data": "workspace:*",
+    "react": "^19.2.2",
+    "react-dom": "^19.2.2"
+  },
+  "devDependencies": {
+    "@microsoft/rayfin-cli": "workspace:*",
+    "@microsoft/rayfin-mcp": "workspace:*",
+    "@types/react": "~19.2.7",
+    "@types/react-dom": "~19.2.3",
+    "@vitejs/plugin-react": "^4.6.0",
+    "autoprefixer": "^10.4.19",
+    "jsdom": "^24.1.0",
+    "postcss": "^8.4.38",
+    "rimraf": "^6.0.1",
+    "tailwindcss": "^3.4.4",
+    "typescript": "^5.8.3",
+    "vite": "^7.3.2"
+  }
+}

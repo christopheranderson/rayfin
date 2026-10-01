@@ -1,0 +1,252 @@
+/**
+ * CSS files with the .module.css suffix are scoped locally.
+ */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 3.25rem 0 2.5rem;
+  color: white;
+  background: var(--rayfin-hero-gradient);
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: -40% -20% auto -20%;
+  height: 140%;
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(255, 255, 255, 0.06) 38%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  transform: rotate(-10deg);
+  pointer-events: none;
+}
+
+.heroInner {
+  position: relative;
+  text-align: center;
+  max-width: 980px;
+}
+
+.heroTopRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1.05rem;
+}
+
+.heroLogo {
+  width: clamp(104px, 12vw, 184px);
+  height: clamp(104px, 12vw, 184px);
+  object-fit: contain;
+  filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.25));
+}
+
+.heroTitle {
+  font-size: clamp(2.35rem, 5vw, 3.35rem);
+  font-weight: 800;
+  line-height: 1.05;
+  margin: 0 0 0.75rem;
+  text-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+
+.heroSubtitle {
+  font-size: 1.15rem;
+  line-height: 1.55;
+  opacity: 0.95;
+  margin: 0 auto 1.35rem;
+  max-width: 48rem;
+}
+
+.heroActions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.05rem;
+}
+
+.primaryCta {
+  border: none;
+  background: white;
+  color: #334155;
+  box-shadow: var(--rayfin-glow);
+}
+
+.primaryCta:hover {
+  transform: translateY(-1px);
+}
+
+.secondaryCta {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: white;
+}
+
+.secondaryCta:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.heroMeta {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  opacity: 0.92;
+}
+
+.heroMetaItem {
+  font-weight: 600;
+}
+
+.heroMetaDot {
+  opacity: 0.7;
+}
+
+.main {
+  background: var(--rayfin-surface-2);
+  padding: 3.25rem 0 4rem;
+}
+
+.section {
+  margin-bottom: 2.5rem;
+}
+
+.sectionHeaderRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.sectionTitle {
+  margin: 0;
+}
+
+.sectionLink {
+  font-weight: 650;
+  text-decoration: none;
+  color: var(--ifm-color-primary);
+}
+
+.sectionLink:hover {
+  text-decoration: underline;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1rem;
+}
+
+.card {
+  grid-column: span 4;
+  background: var(--rayfin-surface-1);
+  border: 1px solid var(--rayfin-border);
+  border-radius: 0.95rem;
+  padding: 1.35rem 1.35rem 1.2rem;
+  box-shadow: var(--rayfin-shadow-sm);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--rayfin-shadow-md);
+  border-color: rgba(148, 163, 184, 0.32);
+}
+
+.cardTitle {
+  margin: 0 0 0.45rem;
+  color: var(--ifm-color-primary);
+  font-weight: 750;
+}
+
+.cardDesc {
+  margin: 0 0 0.9rem;
+  color: var(--rayfin-text-muted);
+}
+
+.cardLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--ifm-color-primary);
+}
+
+.cardLink:hover {
+  text-decoration: underline;
+}
+
+.nextSteps {
+  background: var(--rayfin-surface-1);
+  border: 1px solid var(--rayfin-border);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: var(--rayfin-shadow-sm);
+}
+
+.nextStepsTitle {
+  margin: 0 0 1rem;
+}
+
+.nextStepsList {
+  margin: 0;
+  padding-left: 1.35rem;
+  color: var(--rayfin-text-muted);
+}
+
+.nextStepsList li {
+  margin: 0.75rem 0;
+}
+
+.nextStepsActions {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.ghostCta {
+  background: transparent;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  color: var(--ifm-font-color-base);
+}
+
+.ghostCta:hover {
+  border-color: rgba(148, 163, 184, 0.55);
+  background: rgba(148, 163, 184, 0.08);
+}
+
+.ctaIcon {
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+
+.githubIcon {
+  display: inline-block;
+  vertical-align: text-bottom;
+  margin-right: 0.5rem;
+}
+
+@media screen and (max-width: 996px) {
+  .hero {
+    padding: 2.5rem 0 2rem;
+  }
+
+  .sectionHeaderRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .card {
+    grid-column: span 12;
+  }
+}

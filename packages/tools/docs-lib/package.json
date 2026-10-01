@@ -1,0 +1,62 @@
+{
+  "name": "@microsoft/rayfin-docs",
+  "version": "1.36.1",
+  "description": "Rayfin docs indexing and search library — used by the MCP server, CLI, and other doc-facing surfaces",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./_internal/build-index": {
+      "types": "./dist/_internal/build-index.d.ts",
+      "import": "./dist/_internal/build-index.js"
+    },
+    "./_internal/site-discovery": {
+      "types": "./dist/discovery.d.ts",
+      "import": "./dist/discovery.js",
+      "require": "./dist/site-cjs/discovery.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "dist/**/*.json",
+    "!dist/cjs/**",
+    "!dist/**/__tests__/**",
+    "assets/catalog.json",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "minisearch": "~7.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.10",
+    "eslint": "^9.28.0",
+    "prettier": "^3.5.3",
+    "rimraf": "~6.0.1",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.3",
+    "@vitest/coverage-v8": "~3.2.4"
+  },
+  "scripts": {
+    "build": "tsc && tsc -p tsconfig.site-cjs.json && node scripts/write-site-cjs-package-json.mjs",
+    "build:watch": "tsc --watch",
+    "clean": "rimraf dist .tsbuildinfo .tsbuildinfo.site-cjs",
+    "test": "vitest --run",
+    "test:watch": "vitest"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/microsoft/rayfin.git",
+    "directory": "packages/tools/docs-lib"
+  },
+  "license": "MIT"
+}

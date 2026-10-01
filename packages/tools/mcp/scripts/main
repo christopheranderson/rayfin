@@ -1,0 +1,8 @@
+#!/usr/bin/env node
+import { cli } from '../dist/index.js';
+
+cli.parse(process.argv);
+
+if (!process.argv.slice(2).length) {
+  cli.outputHelp();
+}

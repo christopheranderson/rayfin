@@ -1,0 +1,39 @@
+#!/usr/bin/env node
+
+/**
+ * Generate build information file with timestamp
+ * This script is run as a postbuild step to capture the build timestamp
+ */
+
+import { mkdirSync, writeFileSync } from 'fs';
+import { resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const buildInfo = {
+  buildTimestamp: new Date().toISOString(),
+  buildDate: new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZoneName: 'short',
+  }),
+};
+
+// Write to dist directory so it's included in the built package
+const distPath = resolve(__dirname, '..', 'dist');
+const buildJsonPath = resolve(__dirname, '..', 'dist', 'build-info.json');
+
+try {
+  mkdirSync(distPath, { recursive: true });
+  writeFileSync(buildJsonPath, JSON.stringify(buildInfo, null, 2), 'utf8');
+  console.log(`✅ Build info generated: ${buildJsonPath}`);
+  console.log(`   Build timestamp: ${buildInfo.buildTimestamp}`);
+} catch (error) {
+  console.error('❌ Failed to generate build info:', error.message);
+  process.exit(1);
+}

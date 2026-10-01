@@ -1,0 +1,33 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "../../",
+    "paths": {
+      "@microsoft/rayfin-core": ["packages/typescript-sdk/core/src"],
+      "@microsoft/rayfin-lib": ["packages/typescript-sdk/lib/src"],
+      "@microsoft/rayfin-auth": ["packages/typescript-sdk/auth/src"],
+      "@microsoft/rayfin-data": ["packages/typescript-sdk/data/src"],
+      "@microsoft/rayfin-functions": ["packages/typescript-sdk/functions/src"],
+      "@microsoft/rayfin-client": ["packages/typescript-sdk/client/src"],
+      "@microsoft/rayfin-storage": ["packages/typescript-sdk/storage/src"]
+    },
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  },
+  "include": [
+    "../../packages/typescript-sdk/lib/src/**/*",
+    "../../packages/typescript-sdk/core/src/**/*",
+    "../../packages/typescript-sdk/auth/src/**/*",
+    "../../packages/typescript-sdk/data/src/**/*"
+  ],
+  "exclude": [
+    "../../packages/typescript-sdk/**/__tests__",
+    "../../packages/typescript-sdk/**/examples",
+    "../../**/*.test.ts",
+    "../../**/*.test.tsx",
+    "../../**/*.spec.ts",
+    "../../**/*.spec.tsx",
+    "../../docs/site",
+    "../../node_modules"
+  ]
+}

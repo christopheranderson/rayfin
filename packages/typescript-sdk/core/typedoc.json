@@ -1,0 +1,10 @@
+{
+  "readme": "none",
+  "intentionallyNotExported": [
+    "EntityDecoratorTarget",
+    "CustomKeyEntityClass",
+    "OneRelationshipDecorator",
+    "ManyRelationshipDecorator",
+    "DataPathRelationshipOptions"
+  ]
+}

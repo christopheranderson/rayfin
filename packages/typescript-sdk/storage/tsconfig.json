@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "tsBuildInfoFile": ".tsbuildinfo",
+    "paths": {
+      "@microsoft/rayfin-lib": ["../lib/src"],
+      "@microsoft/rayfin-lib/*": ["../lib/src/*"],
+      "@microsoft/rayfin-core": ["../core/src"],
+      "@microsoft/rayfin-core/*": ["../core/src/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules"],
+  "references": [{ "path": "../core" }, { "path": "../lib" }]
+}

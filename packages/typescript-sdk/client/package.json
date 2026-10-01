@@ -1,0 +1,60 @@
+{
+  "name": "@microsoft/rayfin-client",
+  "sideEffects": false,
+  "version": "1.36.1",
+  "description": "Main client SDK for Rayfin services",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./experimental": {
+      "typedoc": null,
+      "types": "./dist/experimental/index.d.ts",
+      "default": "./dist/experimental/index.js"
+    }
+  },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "!dist/**/__tests__/**",
+    "LICENSE",
+    "assets/docs"
+  ],
+  "scripts": {
+    "build": "tsc && node ../scripts/fix-esm-extensions.mjs ./dist",
+    "test": "vitest run",
+    "clean": "rimraf dist && rimraf .tsbuildinfo"
+  },
+  "dependencies": {
+    "@microsoft/rayfin-auth": "workspace:*",
+    "@microsoft/rayfin-connectors": "workspace:*",
+    "@microsoft/rayfin-data": "workspace:*",
+    "@microsoft/rayfin-lib": "workspace:*",
+    "@microsoft/rayfin-functions": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.3",
+    "@vitest/coverage-v8": "~3.2.4",
+    "jsdom": "^24.1.0",
+    "rimraf": "~6.0.1"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/microsoft/rayfin.git",
+    "directory": "packages/typescript-sdk/client"
+  },
+  "license": "MIT",
+  "rayfinDocs": {
+    "version": 1,
+    "dir": "assets/docs",
+    "module": "rayfin-client",
+    "kind": "api-reference"
+  }
+}

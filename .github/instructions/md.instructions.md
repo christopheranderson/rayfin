@@ -1,0 +1,64 @@
+---
+applyTo: '**/*.md'
+---
+
+**IMPORTANT**: Strictly follow all markdownlint rules below when generating markdown files.
+
+Comprehensive list of all markdownlint rules:
+
+- MD001/heading-increment: Heading levels should only increment by one level at a time
+- MD003/heading-style: Heading style
+- MD004/ul-style: Unordered list style
+- MD005/list-indent: Inconsistent indentation for list items at the same level
+- MD007/ul-indent: Unordered list indentation
+- MD009/no-trailing-spaces: Trailing spaces
+- MD010/no-hard-tabs: Hard tabs
+- MD011/no-reversed-links: Reversed link syntax
+- MD012/no-multiple-blanks: Multiple consecutive blank lines
+- MD014/commands-show-output: Dollar signs used before commands without showing output
+- MD018/no-missing-space-atx: No space after hash on atx style heading
+- MD019/no-multiple-space-atx: Multiple spaces after hash on atx style heading
+- MD020/no-missing-space-closed-atx: No space inside hashes on closed atx style heading
+- MD021/no-multiple-space-closed-atx: Multiple spaces inside hashes on closed atx style heading
+- MD022/blanks-around-headings: Headings should be surrounded by blank lines
+- MD023/heading-start-left: Headings must start at the beginning of the line
+- MD024/no-duplicate-heading: Multiple headings with the same content
+- MD025/single-title/single-h1: Multiple top-level headings in the same document
+- MD026/no-trailing-punctuation: Avoid trailing punctuation in heading
+- MD027/no-multiple-space-blockquote: Multiple spaces after blockquote symbol
+- MD028/no-blanks-blockquote: Blank line inside blockquote
+- MD029/ol-prefix: Ordered list item prefix
+- MD030/list-marker-space: Spaces after list markers
+- MD031/blanks-around-fences: Fenced code blocks should be surrounded by blank lines
+- MD032/blanks-around-lists: Lists should be surrounded by blank lines
+- MD033/no-inline-html: Inline HTML
+- MD034/no-bare-urls: Bare URL used
+- MD035/hr-style: Horizontal rule style
+- MD036/no-emphasis-as-heading: Emphasis used instead of a heading
+- MD037/no-space-in-emphasis: Spaces inside emphasis markers
+- MD038/no-space-in-code: Spaces inside code span elements
+- MD039/no-space-in-links: Spaces inside link text
+- MD040/fenced-code-language: Fenced code blocks should have a language specified (use "text" if it's not a code language)
+- MD041/first-line-heading/first-line-h1: First line in a file should be a top-level heading
+- MD042/no-empty-links: No empty links
+- MD043/required-headings: Required heading structure
+- MD044/proper-names: Proper names should have correct capitalization
+- MD045/no-alt-text: Images should have alternate text (alt text)
+- MD046/code-block-style: Code block style
+- MD047/single-trailing-newline: Files should end with a single newline character
+- MD048/code-fence-style: Code fence style
+- MD049/emphasis-style: Emphasis style
+- MD050/strong-style: Strong style
+- MD051/link-fragments: Link fragments should be valid
+- MD052/reference-links-images: Reference links and images should use a label that is defined
+- MD053/link-image-reference-definitions: Link and image reference definitions should be needed
+- MD054/link-image-style: Link and image style
+- MD055/table-pipe-style: Table pipe style
+- MD056/table-column-count: Table column count
+
+Additionally, all sentences should be on their own line.
+
+## Documentation Standards
+
+- All markdown used for docs, READMEs, AGENTS, and instructions must pass `rush docs:lint`.
+- Follow project-specific structure and audience guidance from `packages/guide/assets/docs/index.md`, `/docs/contributor/README.md`, and any relevant `AGENTS.md` files.

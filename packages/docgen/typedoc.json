@@ -1,0 +1,64 @@
+{
+  "entryPoints": [
+    "../../packages/typescript-sdk/lib",
+    "../../packages/typescript-sdk/core",
+    "../../packages/typescript-sdk/client",
+    "../../packages/typescript-sdk/auth",
+    "../../packages/typescript-sdk/data",
+    "../../packages/typescript-sdk/auth-provider-fabric",
+    "../../packages/typescript-sdk/functions",
+    "../../packages/typescript-sdk/connectors",
+    "../../packages/typescript-sdk/connector-fabric-semanticmodel"
+    // Excluded on purpose:
+    // - connector-kusto and storage are marked stability: "experimental" and
+    //   gated out of the stable docs site, so a TypeDoc entry here would be
+    //   orphaned by the site's required-module check.
+    // - connector-fabric-graphql ships a hand-authored multi-page doc hub
+    //   (assets/docs/index.md + entities/querying/mutations/troubleshooting).
+    //   The docs site mirrors generated TypeDoc output in preference to that
+    //   hub, which would drop the companion pages and break their relative
+    //   links, so graphql keeps its curated hub instead of a generated entry.
+    // See docs/site/rayfin-docs-sources.ts.
+    // "../../packages/typescript-sdk/connector-fabric-graphql",
+    // "../../packages/typescript-sdk/connector-kusto",
+    // "../../packages/typescript-sdk/storage",
+  ],
+  "entryPointStrategy": "packages",
+  "tsconfig": "./tsconfig.typedoc.json",
+  "out": "dist/ts-sdk",
+  "plugin": [
+    "typedoc-plugin-markdown",
+    "typedoc-docusaurus-theme",
+    "typedoc-plugin-frontmatter"
+  ],
+  "packageOptions": {
+    "excludeInternal": true,
+    "excludePrivate": true,
+    "excludeProtected": true
+  },
+  "exclude": [
+    "**/node_modules/**",
+    "**/samples/**",
+    "**/tests/**",
+    "**/__tests__/**",
+    "**/dist/**"
+  ],
+  "readme": "none",
+  "useHTMLEncodedBrackets": false,
+  "sanitizeComments": true,
+  "excludeInternal": true,
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "categorizeByGroup": false,
+  "markdownLinkExternal": true,
+  "disableSources": false,
+  "docsPath": "dist/ts-sdk",
+  "externalPattern": ["**/node_modules/**", "**/samples/**"],
+  "treatWarningsAsErrors": true,
+  "sidebar": {
+    "typescript": true
+  },
+  "textContentMappings": {
+    "title.memberPage": "{name}"
+  }
+}

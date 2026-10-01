@@ -1,0 +1,88 @@
+{
+  "name": "@microsoft/rayfin-core",
+  "version": "1.36.1",
+  "description": "TypeScript library for code-first Data API Builder configuration generation",
+  "type": "module",
+  "main": "dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./decorators": {
+      "import": "./dist/decorators/decorators.js",
+      "types": "./dist/decorators/decorators.d.ts"
+    },
+    "./analysis": {
+      "import": "./dist/analysis/index.js",
+      "types": "./dist/analysis/index.d.ts"
+    },
+    "./schema": {
+      "import": "./dist/schema.js",
+      "types": "./dist/schema.d.ts"
+    },
+    "./experimental": {
+      "typedoc": null,
+      "import": "./dist/experimental/index.js",
+      "types": "./dist/experimental/index.d.ts"
+    }
+  },
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "!dist/**/__tests__/**",
+    "assets/docs",
+    "LICENSE"
+  ],
+  "rayfinDocs": {
+    "version": 1,
+    "dir": "assets/docs",
+    "module": "rayfin-core",
+    "kind": "api-reference"
+  },
+  "scripts": {
+    "build": "tsc && node ../scripts/fix-esm-extensions.mjs ./dist",
+    "build:watch": "tsc --watch",
+    "test": "vitest --run",
+    "test:coverage": "vitest --run --coverage --coverage.reporter=text",
+    "test:watch": "vitest",
+    "clean": "rimraf dist && rimraf .tsbuildinfo",
+    "dab:start": "dab start --config ./dist/dab-config.json",
+    "dab:validate": "dab validate --config ./dist/dab-config.json",
+    "dab:clean": "rimraf ./dist/dab-config*.json"
+  },
+  "keywords": [
+    "data-api-builder",
+    "dab",
+    "typescript",
+    "decorators"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@microsoft/rayfin-lib": "workspace:*",
+    "@standard-schema/spec": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "eslint": "^9.28.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.3",
+    "@vitest/coverage-v8": "~3.2.4",
+    "rimraf": "~6.0.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/microsoft/rayfin.git",
+    "directory": "packages/typescript-sdk/core"
+  }
+}

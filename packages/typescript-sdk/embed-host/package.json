@@ -1,0 +1,43 @@
+{
+  "name": "@microsoft/rayfin-embed-host",
+  "version": "1.36.1",
+  "description": "Parent-page SDK that brokers external-Entra authentication for a Rayfin app embedded in an iframe by a third-party portal",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "!dist/**/__tests__/**",
+    "LICENSE"
+  ],
+  "type": "module",
+  "dependencies": {
+    "@microsoft/fabric-embedded-host": "workspace:*",
+    "@microsoft/rayfin-lib": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.3",
+    "@vitest/coverage-v8": "~3.2.4",
+    "rimraf": "~6.0.1"
+  },
+  "scripts": {
+    "build": "tsc && node ../scripts/fix-esm-extensions.mjs ./dist",
+    "build:watch": "tsc --watch",
+    "clean": "rimraf dist && rimraf .tsbuildinfo",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/microsoft/rayfin.git",
+    "directory": "packages/typescript-sdk/embed-host"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT"
+}

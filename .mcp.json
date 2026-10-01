@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "Github": {
+      "url": "https://api.githubcopilot.com/mcp/",
+      "type": "http"
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"],
+      "type": "stdio"
+    },
+    "raymcp": {
+      "command": "node",
+      "args": ["packages/tools/mcp/scripts/main", "start"],
+      "type": "stdio"
+    }
+  }
+}

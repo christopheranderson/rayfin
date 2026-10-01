@@ -1,0 +1,58 @@
+{
+  "name": "@microsoft/create-rayfin",
+  "version": "1.36.1",
+  "description": "Scaffold a Rayfin project with `npm init @microsoft/create-rayfin`.",
+  "license": "MIT",
+  "author": "Microsoft",
+  "type": "module",
+  "main": "./dist/src/index.js",
+  "scripts": {
+    "clean": "rimraf dist .tsbuildinfo",
+    "build": "tsc --build",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm run build",
+    "test": "vitest --run",
+    "test:watch": "vitest"
+  },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "!dist/**/__tests__/**",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20.0.0 <21.0.0 || >=22.0.0 <23.0.0 || >=24.0.0 <25.0.0"
+  },
+  "devDependencies": {
+    "@types/figlet": "^1.7.0",
+    "@types/node": "^24.0.10",
+    "@vitest/coverage-v8": "~3.2.4",
+    "commander": "^12.1.0",
+    "rimraf": "~6.0.1",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.3"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "bin": {
+    "create-rayfin": "./dist/src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/microsoft/rayfin.git",
+    "directory": "packages/tools/create-rayfin"
+  },
+  "dependencies": {
+    "@microsoft/rayfin-cli": "workspace:*",
+    "@microsoft/rayfin-tools-common": "workspace:*",
+    "commander": "^12.1.0",
+    "figlet": "^1.8.0",
+    "ora": "^8.1.1",
+    "@opentelemetry/sdk-node": "~0.222.0",
+    "@opentelemetry/api": "^1.9.1",
+    "@azure/monitor-opentelemetry-exporter": "1.0.0-beta.45"
+  }
+}

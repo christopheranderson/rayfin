@@ -1,0 +1,29 @@
+# Docker Compose override for local WebService development
+#
+# This file enables contributors to test local WebService changes through `npm run dev:local`.
+# It overrides the base docker-compose.yml to build the WebService from source with hot-reload
+# and debugging support instead of using the pre-built GHCR image.
+#
+# Usage:
+#   npm run dev:local              # Start with local WebService
+#   npm run dev:local:rebuild      # Force rebuild and start
+#
+# For debugging:
+#   1. Start the services with `npm run dev:local`
+#   2. In VS Code, use "Attach to WebService (todo-app Docker)" launch configuration
+#   3. Set breakpoints in packages/host/Microsoft.Rayfin.WebService
+#
+# Path resolution: Relative paths resolve from the --project-directory passed by the CLI
+# (set via COMPOSE_PROJECT_DIRECTORY=../.. in the npm script, which resolves to repo root).
+
+services:
+  webservice:
+    build:
+      # Build from repo root to access packages/host/
+      context: .
+      dockerfile: packages/host/Dockerfile.development
+    # Tag locally built image to override remote GHCR image
+    image: rayfin/webservice:local
+    volumes:
+      # Mount source for hot-reload with dotnet watch
+      - ./packages/host:/src/packages/host:cached

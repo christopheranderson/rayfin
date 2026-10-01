@@ -1,0 +1,39 @@
+import {
+  entity,
+  role,
+  uuid,
+  text,
+  boolean,
+  date,
+  decimal,
+  int,
+  one,
+  many,
+} from '@microsoft/rayfin-core';
+
+import { TestEntity1 } from './TestEntity1.js';
+
+@entity()
+@role('authenticated', '*', {
+  policy: (claims, item) => claims.sub.eq(item.user_id),
+})
+export class TestEntity2 {
+  @uuid() id!: string;
+  @text() label!: string;
+  @text({ optional: true }) notes?: string;
+  @int() quantity!: number;
+  @int({ optional: true }) optionalQuantity?: number;
+  @decimal() price!: number;
+  @boolean() isActive!: boolean;
+  @boolean({ optional: true }) optionalFlag?: boolean;
+  @date() timestamp!: Date;
+  @date({ optional: true }) optionalTimestamp?: Date;
+
+  @one(() => TestEntity1, { optional: true }) parent?: TestEntity1;
+
+  @one(() => TestEntity2, { optional: true }) sibling?: TestEntity2;
+
+  @many(() => TestEntity2) referrers?: TestEntity2[];
+
+  @text() user_id!: string;
+}

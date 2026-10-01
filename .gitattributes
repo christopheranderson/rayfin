@@ -1,0 +1,68 @@
+# Set default behavior to automatically normalize line endings
+* text=auto
+
+# C# files should use LF line endings for cross-platform consistency
+*.cs text eol=lf
+*.csx text eol=lf
+*.vb text eol=lf
+*.vbx text eol=lf
+
+# TypeScript/JavaScript files should use LF
+*.ts text eol=lf
+*.js text eol=lf
+*.mjs text eol=lf
+*.cjs text eol=lf
+*.tsx text eol=lf
+*.jsx text eol=lf
+*.json text eol=lf
+
+# Historical validator fixtures are digest-checked JavaScript snapshots.
+# Keep them LF-stable on Windows even though they use a non-executable .txt suffix.
+samples/universal-app/template/scripts/__fixtures__/visual-validator.pre-*.txt text eol=lf
+
+# Web files should use LF
+*.html text eol=lf
+*.htm text eol=lf
+*.css text eol=lf
+*.svg text eol=lf
+
+# Markdown and documentation
+*.md text eol=lf
+
+# Configuration files
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+.env* text eol=lf
+
+# Shell scripts must be LF: a CRLF shebang or `set -e` line fails on Linux,
+# which is where CI runs them.
+*.sh text eol=lf
+
+# The sync allow-lists are read line by line by shell and node, and the
+# retirement helper anchors a sed on end-of-line. A CRLF checkout leaves a
+# trailing \r on every entry, so the anchor stops matching and a retired export
+# silently stays active.
+*.paths text eol=lf
+
+# 1ES Pipeline Templates auto-baselining regenerates this file through
+# automation that commits CRLF line endings. The *.yml eol=lf rule above would
+# renormalize it on every checkout, producing a permanent phantom diff. Mark it
+# -text so git leaves its line endings untouched.
+.config/1espt/PipelineAutobaseliningConfig.yml -text
+
+# Binary files
+*.dll binary
+*.exe binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+# Don't allow people to merge changes to these generated files, because the result
+# may be invalid.  You need to run "rush update" again.
+pnpm-lock.yaml               merge=text
+shrinkwrap.yaml              merge=binary
+npm-shrinkwrap.json          merge=binary
+yarn.lock                    merge=binary

@@ -1,0 +1,69 @@
+{
+  "name": "@microsoft/rayfin-local-dev",
+  "version": "1.36.1",
+  "description": "Local development adapters for Rayfin applications",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./vite": {
+      "types": "./dist/vite.d.ts",
+      "import": "./dist/vite.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "!dist/**/__tests__/**",
+    "assets/docs",
+    "LICENSE"
+  ],
+  "rayfinDocs": {
+    "version": 1,
+    "dir": "assets/docs",
+    "module": "rayfin-local-dev",
+    "kind": "api-reference"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "clean": "rimraf dist .tsbuildinfo"
+  },
+  "peerDependencies": {
+    "vite": ">=5.0.0 <9.0.0"
+  },
+  "peerDependenciesMeta": {
+    "vite": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.10",
+    "rimraf": "~6.0.1",
+    "typescript": "^5.8.3",
+    "vite": "^8.0.16",
+    "vitest": "^3.2.3"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/microsoft/rayfin.git",
+    "directory": "packages/tools/local-dev"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "yaml": "^2.8.3",
+    "@microsoft/rayfin-cli": "workspace:*"
+  }
+}

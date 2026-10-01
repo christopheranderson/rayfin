@@ -1,0 +1,147 @@
+name: PR Build & Test
+
+on:
+  pull_request:
+
+  # Allow manual workflow runs for testing
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  checks: write
+  pull-requests: write
+  contents: read
+
+jobs:
+  typescript:
+    name: TypeScript Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for accurate changelog generation
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          # todo: matrix version support
+          node-version: 22
+          # registry-url: https://npm.pkg.github.com/
+
+      - name: purge
+        run: node common/scripts/install-run-rush.js purge
+
+      - name: Install dependencies
+        id: npmci
+        run: node common/scripts/install-run-rush.js install
+        continue-on-error: true
+
+      - name: Fix install issues
+        if: ${{ steps.npmci.outcome == 'failure' }}
+        run: |
+          rm -rf node_modules
+          node common/scripts/install-run-rush.js purge
+          node common/scripts/install-run-rush.js install
+
+      - name: Clean TypeScript build artifacts
+        run: node common/scripts/install-run-rush.js clean
+
+      - name: Build TypeScript packages
+        run: node common/scripts/install-run-rush.js build --verbose
+
+      - name: Run TypeScript tests with coverage
+        run: node common/scripts/install-run-rush.js test:coverage
+        env:
+          CI: true
+
+      # Node's built-in suites cover template scripts and skill kits that the
+      # Vitest coverage run does not discover.
+      - name: Verify the Universal App template scripts
+        working-directory: samples/universal-app
+        run: node ../../common/scripts/install-run-rushx.js test:template
+
+      # Run skill-kit tests from the CLI bundle so repository-only dependencies
+      # resolve without adding them to generated Universal Apps.
+      - name: Verify the Universal App skill kit
+        working-directory: packages/tools/cli
+        run: node --test "templates/universal-app/.agents/**/*.test.mjs"
+
+      - name: Upload test results artifacts
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: typescript-test-results
+          path: |
+            test-results/
+            coverage/
+            code-coverage-results.md
+          retention-days: 7
+
+      - name: Publish TypeScript test results
+        uses: dorny/test-reporter@v2
+        if: ${{ !cancelled() }}
+        with:
+          name: TypeScript Test Results
+          path: 'test-results/typescript-results.xml'
+          reporter: jest-junit
+          badge-title: 'TypeScript Tests'
+          fail-on-error: false
+          fail-on-empty: false
+
+      - name: Code Coverage Summary (TypeScript)
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        with:
+          filename: coverage/**/cobertura-coverage.xml
+          badge: true
+          format: markdown
+          hide_complexity: true
+          output: both
+          thresholds: '60 80'
+        id: typescript-coverage
+
+      - name: Add TypeScript Coverage to GitHub Step Summary
+        if: ${{ !cancelled() }}
+        run: |
+          if [ -f code-coverage-results.md ]; then
+            echo "<details><summary>Expand for coverage details</summary>" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "</details>" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No TypeScript coverage data available" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  vsix-build:
+    name: VSIX Build (mirrors Azure release pipeline)
+    runs-on: ubuntu-latest
+    # Mirrors .azure-pipelines/templates/vsix-build-stage.yml so that any
+    # regression that breaks the scoped vsix install/build (which only
+    # installs dependencies reachable from rayfin-vscode and therefore
+    # exposes missing devDependencies that a full `rush install` would
+    # otherwise mask via cross-project hoisting) is caught at PR time.
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Rush install (vscode extension dependencies)
+        run: node common/scripts/install-run-rush.js install --to rayfin-vscode
+
+      - name: Rush build (vscode extension)
+        run: node common/scripts/install-run-rush.js build --to rayfin-vscode
+
+      - name: Package VSIX
+        run: node ../../../common/scripts/install-run-rushx.js package
+        working-directory: packages/tools/vscode

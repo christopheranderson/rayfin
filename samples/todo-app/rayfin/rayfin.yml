@@ -1,0 +1,48 @@
+id: todo-app
+name: todo-app
+version: 1.0.11
+services:
+  auth:
+    enabled: true
+    allowedRedirectUris:
+      - http://localhost:5173
+      - http://localhost:5173/auth/callback
+    fabric:
+      enabled: true
+    customClaims:
+      app_version: 1.0.0
+    scopes:
+      - read:data
+      - write:data
+    password:
+      enabled: true
+    refreshToken:
+      absoluteLifetimeInMinutes: ${AUTH_RT_ABSOLUTE_LIFETIME_MINUTES:--1}
+    passwordless:
+      magicLink:
+        enabled: true
+        expiryMinutes: 15
+    email:
+      enabled: ${AUTH_EMAIL_ENABLED:-true}
+      provider: smtp
+      senderName: Rayfin Platform
+      verificationTokenExpirationHours: 24
+      passwordResetTokenExpirationMinutes: 30
+      smtp:
+        host: maildev
+        port: 1025
+        senderEmail: noreply@rayfin.local
+        username: ''
+        password: ''
+        useSsl: false
+        useStartTls: false
+        webPort: 1080
+  data:
+    enabled: true
+    dialect: postgresql
+  staticHosting:
+    enabled: true
+    folder: dist
+    buildCommand: npm run build:fabric
+    indexDocument: index.html
+    assetAccess: protected

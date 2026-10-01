@@ -1,0 +1,130 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Todo App",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/samples/todo-app",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "/./*": "${workspaceFolder}/samples/todo-app/*",
+        "/src/*": "${workspaceFolder}/samples/todo-app/src/*",
+        "/@microsoft/rayfin-core/*": "${workspaceFolder}/packages/@rayfin/core/src/*",
+        "/@microsoft/rayfin-data/*": "${workspaceFolder}/packages/@rayfin/data/src/*"
+      },
+      "skipFiles": ["<node_internals>/**"],
+      "preLaunchTask": "todo-app:dev",
+      "serverReadyAction": {
+        "pattern": "Local:\\s+(https?://\\S+|http://localhost:[0-9]+)",
+        "uriFormat": "%s",
+        "action": "debugWithChrome"
+      }
+    },
+    {
+      "name": "Debug Rayfin WebService",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "dotnet:build-noformat",
+      "program": "${workspaceFolder}/packages/host/Microsoft.Rayfin.WebService/bin/Debug/net8.0/Microsoft.Rayfin.WebService.dll",
+      "cwd": "${workspaceFolder}/packages/host/Microsoft.Rayfin.WebService",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5168"
+      },
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(http://\\S+)",
+        "uriFormat": "%s/swagger"
+      },
+      "logging": {
+        "moduleLoad": false
+      }
+    },
+    {
+      "name": "Debug Rayfin CLI",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/packages/tools/cli/dist/app/main.js",
+      "args": ["dev", "--pull"], // Add your arguments here
+      "cwd": "${workspaceFolder}/packages/tools/cli-tests/samples/storage-permissions",
+      "console": "integratedTerminal",
+      "preLaunchTask": "cli:build",
+      "skipFiles": ["<node_internals>/**"],
+      "sourceMaps": true,
+      "outFiles": ["${workspaceFolder}/packages/tools/cli/dist/**/*.js"]
+    },
+    {
+      "name": "Attach to WebService (todo-app Docker)",
+      "type": "coreclr",
+      "request": "attach",
+      "processName": "Microsoft.Rayfin.WebService",
+      "pipeTransport": {
+        "pipeProgram": "docker",
+        "pipeArgs": ["exec", "-i", "todo-app-webservice-1"],
+        "pipeCwd": "${workspaceFolder}",
+        "debuggerPath": "/vsdbg/vsdbg",
+        "quoteArgs": false
+      },
+      "sourceFileMap": {
+        "/src/packages/host": "${workspaceFolder}/packages/host"
+      },
+      "preLaunchTask": "Restart Todo-app WebService Container (Docker)",
+      "justMyCode": false,
+      "logging": {
+        "moduleLoad": false
+      }
+    },
+    {
+      "name": "Debug Todo App E2E Tests",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "rushx",
+      "runtimeArgs": ["test:e2e"],
+      "cwd": "${workspaceFolder}/samples/todo-app",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "E2E_KEEP_BACKEND_RUNNING": "true"
+      },
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Launch Rayfin Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "args": [
+        "--profile=noExtensionsProfile",
+        "--extensionDevelopmentPath=${workspaceFolder}/packages/tools/vscode"
+      ],
+      "outFiles": ["${workspaceFolder}/packages/tools/vscode/dist/**/*.js"],
+      "preLaunchTask": "vscode: watch",
+      "autoAttachChildProcesses": false,
+      "sourceMaps": true,
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/packages/tools/vscode/dist/**",
+        "!**/node_modules/**"
+      ],
+      "sourceMapPathOverrides": {
+        "./*": "${workspaceFolder}/packages/tools/vscode/*"
+      }
+    },
+    {
+      "name": "Launch Rayfin Web Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "debugWebWorkerHost": true,
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/packages/tools/vscode",
+        "--extensionDevelopmentKind=web"
+      ],
+      "outFiles": ["${workspaceFolder}/packages/tools/vscode/dist/web/**/*.js"],
+      "preLaunchTask": "vscode: watch"
+    }
+  ]
+}

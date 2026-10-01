@@ -1,0 +1,207 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "todo-app:dev",
+      "type": "shell",
+      "command": "npm run dev",
+      "options": {
+        "cwd": "${workspaceFolder}/samples/todo-app"
+      },
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": [
+          {
+            "regexp": ".",
+            "file": 1,
+            "location": 2,
+            "message": 3
+          }
+        ],
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": ".*Local:.*http://localhost:[0-9]+.*"
+        }
+      }
+    },
+    {
+      "label": "build",
+      "type": "shell",
+      "command": "rush build && dotnet build",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$tsc", "$msCompile"]
+    },
+    {
+      "label": "start:web-service",
+      "type": "shell",
+      "command": "dotnet run",
+      "options": {
+        "cwd": "${workspaceFolder}/packages/host/Microsoft.Rayfin.WebService"
+      }
+    },
+    {
+      "label": "dotnet:build-noformat",
+      "type": "shell",
+      "command": "dotnet build -p:FormatOnBuild=false",
+      "group": "build",
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "cli:build",
+      "type": "shell",
+      "command": "node common/scripts/install-run-rush.js build --to @microsoft/rayfin-cli",
+      "group": "build",
+      "problemMatcher": "$tsc"
+    },
+    {
+      "label": "dotnet:format",
+      "type": "shell",
+      "command": "dotnet format --verbosity diagnostic",
+      "group": "build",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": {
+        "owner": "dotnet-format",
+        "fileLocation": "absolute",
+        "pattern": {
+          "regexp": "^(.*)\\((\\d+),(\\d+)\\):\\s+(warning|error|info)\\s+(\\w+):\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "code": 5,
+          "message": 6
+        }
+      }
+    },
+    {
+      "label": "dotnet:format-verify",
+      "type": "shell",
+      "command": "dotnet format --verify-no-changes --verbosity diagnostic",
+      "group": "build",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": {
+        "owner": "dotnet-format-verify",
+        "fileLocation": "absolute",
+        "pattern": {
+          "regexp": "^(.*)\\((\\d+),(\\d+)\\):\\s+(warning|error|info)\\s+(\\w+):\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "code": 5,
+          "message": 6
+        }
+      }
+    },
+    {
+      "label": "rayfin:dev-setup",
+      "type": "shell",
+      "command": "pwsh",
+      "args": ["-NoLogo", "-NoProfile", "-File", "./developer-setup.ps1"],
+      "options": {
+        "cwd": "${workspaceFolder}/packages/host"
+      }
+    },
+    {
+      "label": "Restart Todo-app WebService Container (Docker)",
+      "type": "shell",
+      "command": "docker",
+      "args": [
+        "restart",
+        "todo-app-webservice-1",
+        "&&",
+        "timeout",
+        "/t",
+        "5",
+        "/nobreak",
+        "&&",
+        "docker",
+        "exec",
+        "todo-app-webservice-1",
+        "sh",
+        "-c",
+        "TIMEOUT=60; ELAPSED=0; while [ $ELAPSED -lt $TIMEOUT ]; do if ps aux | grep 'Microsoft.Rayfin.WebService' | grep -v grep | grep -v 'dotnet watch' | grep -v 'Microsoft.Rayfin.WebService.csproj' > /dev/null 2>&1; then echo 'WebService ready for debugging'; exit 0; fi; echo 'Waiting for WebService process...'; sleep 1; ELAPSED=$((ELAPSED + 1)); done; echo 'ERROR: WebService process did not start within 60 seconds'; exit 1"
+      ],
+      "options": {
+        "shell": {
+          "executable": "cmd.exe",
+          "args": ["/d", "/c"]
+        }
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "vscode: build",
+      "type": "shell",
+      "command": "rushx build:dev",
+      "options": {
+        "cwd": "${workspaceFolder}/packages/tools/vscode"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "vscode: watch",
+      "type": "shell",
+      "command": "rushx build:watch",
+      "options": {
+        "cwd": "${workspaceFolder}/packages/tools/vscode"
+      },
+      "group": "build",
+      "isBackground": true,
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated"
+      },
+      "problemMatcher": {
+        "owner": "custom",
+        "pattern": {
+          "regexp": "^(?!x)x"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": "Watching for changes\\.\\.\\."
+        }
+      }
+    }
+  ]
+}

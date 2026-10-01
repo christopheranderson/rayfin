@@ -1,0 +1,136 @@
+name: Publish NPM Packages
+description: >
+  Shared composite action for publishing npm packages to GitHub Packages.
+  Reads the current version, optionally stamps an alpha.N suffix using
+  rush version, and publishes via rush publish.
+
+inputs:
+  tag:
+    description: 'npm dist-tag to publish under (e.g. "latest", "nightly")'
+    required: false
+    default: ''
+  node-version:
+    description: 'Node.js version to use'
+    required: false
+    default: '20'
+  token:
+    description: 'GitHub token with packages:write scope'
+    required: true
+
+outputs:
+  version:
+    description: 'The base version read from package.json'
+    value: ${{ steps.version.outputs.version }}
+  is_alpha:
+    description: 'Whether the base version is an alpha pre-release'
+    value: ${{ steps.version.outputs.is_alpha }}
+  published_version:
+    description: 'The final version that was published (includes alpha.N suffix if applicable)'
+    value: ${{ steps.resolve.outputs.published_version }}
+  skipped:
+    description: 'Whether publishing was skipped because the version already exists'
+    value: ${{ steps.check_exists.outputs.exists }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Read package version
+      id: version
+      shell: bash
+      run: |
+        VERSION=$(node -p "require('./packages/typescript-sdk/core/package.json').version")
+        echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+        if [[ "$VERSION" == *"alpha"* ]]; then
+          echo "is_alpha=true" >> "$GITHUB_OUTPUT"
+          echo "default_tag=nightly" >> "$GITHUB_OUTPUT"
+        elif [[ "$VERSION" == *"beta"* ]]; then
+          echo "is_alpha=false" >> "$GITHUB_OUTPUT"
+          echo "default_tag=preview" >> "$GITHUB_OUTPUT"
+        else
+          echo "is_alpha=false" >> "$GITHUB_OUTPUT"
+          echo "default_tag=latest" >> "$GITHUB_OUTPUT"
+        fi
+        echo "Package version: $VERSION"
+
+    - name: Compute alpha.N version
+      if: steps.version.outputs.is_alpha == 'true'
+      id: alpha_suffix
+      shell: bash
+      run: |
+        BASE_VERSION="${{ steps.version.outputs.version }}"
+        N=$(git rev-list --count HEAD)
+        FULL_VERSION="${BASE_VERSION}.${N}"
+        echo "full_version=$FULL_VERSION" >> "$GITHUB_OUTPUT"
+        echo "Alpha version with suffix: $FULL_VERSION"
+
+    - name: Resolve published version
+      id: resolve
+      shell: bash
+      run: |
+        if [[ -n "${{ steps.alpha_suffix.outputs.full_version }}" ]]; then
+          echo "published_version=${{ steps.alpha_suffix.outputs.full_version }}" >> "$GITHUB_OUTPUT"
+        else
+          echo "published_version=${{ steps.version.outputs.version }}" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Check if version already exists on registry
+      id: check_exists
+      shell: bash
+      run: |
+        PUBLISH_VERSION="${{ steps.resolve.outputs.published_version }}"
+        # Query GitHub Packages for @microsoft/rayfin-core at this version
+        HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+          -H "Authorization: Bearer ${{ inputs.token }}" \
+          "https://npm.pkg.github.com/@microsoft/rayfin-core/$PUBLISH_VERSION")
+        if [[ "$HTTP_STATUS" == "200" ]]; then
+          echo "::notice::Version $PUBLISH_VERSION already exists on the registry. Skipping publish."
+          echo "exists=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "Version $PUBLISH_VERSION not found on registry (HTTP $HTTP_STATUS). Proceeding with publish."
+          echo "exists=false" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Install dependencies
+      if: steps.check_exists.outputs.exists != 'true'
+      shell: bash
+      run: |
+        node common/scripts/install-run-rush.js update
+        node common/scripts/install-run-rush.js build
+
+    - name: Configure git user
+      if: steps.check_exists.outputs.exists != 'true'
+      shell: bash
+      run: |
+        git config --global user.email "rayfin-bot@microsoft.com"
+        git config --global user.name "Rayfin Bot"
+
+    - name: Stamp alpha.N version into packages
+      if: steps.alpha_suffix.outputs.full_version != '' && steps.check_exists.outputs.exists != 'true'
+      shell: bash
+      run: |
+        node common/scripts/install-run-rush.js version --ensure-version-policy --version-policy typescript-sdk --override-version ${{ steps.alpha_suffix.outputs.full_version }}
+
+    - name: Override @microsoft registry in .npmrc-publish
+      if: steps.check_exists.outputs.exists != 'true'
+      shell: bash
+      run: |
+        echo "@microsoft:registry=https://npm.pkg.github.com/" >> ./common/config/rush/.npmrc-publish
+
+    - name: Publish packages to GitHub Packages
+      if: steps.check_exists.outputs.exists != 'true'
+      shell: bash
+      run: |
+        # Use explicit tag if provided, otherwise use the default derived from the version
+        TAG="${{ inputs.tag }}"
+        if [[ -z "$TAG" ]]; then
+          TAG="${{ steps.version.outputs.default_tag }}"
+        fi
+        echo "Publishing with dist-tag: $TAG"
+        node common/scripts/install-run-rush.js publish --publish --include-all --set-access-level restricted --tag "$TAG"
+      env:
+        NODE_AUTH_TOKEN: ${{ inputs.token }}

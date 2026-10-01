@@ -1,0 +1,81 @@
+# Global exclusions applied when bundling templates.
+#
+# Patterns are matched with minimatch against the path relative to the template
+# root, which means they are anchored to that root unless they say otherwise. A
+# bare `.env` matches only a `.env` beside package.json; it does nothing about
+# `src/.env.local`. Anything meant to apply at every depth needs an explicit
+# `**/` prefix.
+#
+# Two classes below, deliberately:
+#
+#   **/  names that are unambiguously tool or developer state wherever they
+#        appear. There is no template in which `node_modules` or `.env` is
+#        source, so matching them at any depth cannot cost us a real file.
+#
+#   root names that a template could plausibly use for its own source. `config`
+#        and `dist` are the obvious ones: `src/config/` is a normal thing for an
+#        app to have, and excluding it recursively would silently drop it from
+#        the bundle. These stay anchored to where the tooling actually writes
+#        them.
+
+# Tool and developer state, at any depth.
+**/node_modules/
+**/.git/
+**/.rush/
+**/.next/
+**/.turbo/
+**/.env
+**/.env.*
+**/.DS_Store
+**/.rayfin-copilot.json
+
+# Build-tool caches. Present in the VS Code bundler's
+# `packages/tools/vscode/scripts/template-ignore.mjs` and absent here, so the
+# same working tree shipped them through the CLI and not through the vsix.
+# They are unambiguously tool state under the policy above.
+# `.temp` was previously anchored to `rayfin/` alone, which let
+# `packages/api/.temp/` through; it is dot-prefixed tool state like the rest,
+# so it is matched at any depth here and no longer listed under the root-
+# anchored names below.
+**/.vite/
+**/.cache/
+**/.tmp/
+**/.temp/
+
+# Holds registry credentials once anyone has authenticated against a private
+# feed. Gitignored, so it is invisible in `git status` before a bundle is cut,
+# and there is no template in which it is source.
+**/.npmrc
+
+# tsc writes `<project>.tsbuildinfo`, not `.tsbuildinfo`, so a bare extension
+# never matched anything. The glob covers both spellings at any depth.
+**/*.tsbuildinfo
+
+# Anchored to the template root, because these names can be real source
+# directories further down.
+config/
+config/rush-project.json
+rush-logs/
+dist/
+build/
+rayfin/.deployments.json
+
+# Flat templates and `rayfin functions init` write these under
+# `rayfin/functions`; the Universal App capability writes them under
+# `packages/functions`.
+# `local.settings.json` holds connection strings and whatever keys the developer
+# ran with; `deploymentdata.json` holds their deployment identifiers. The sample
+# gitignores both, so neither shows up in `git status` before a bundle is cut.
+#
+# These have to stay anchored rather than recursive: the functions capability
+# ships its own seed `local.settings.json` inside
+# `.agents/skills/functions-capability/kit/functions/`, and that one is source
+# the scaffolded app needs. Same filename, opposite answers, so the rule is a
+# path.
+rayfin/functions/local.settings.json
+rayfin/functions/deploymentdata.json
+packages/functions/local.settings.json
+packages/functions/deploymentdata.json
+
+.templateignore
+package-lock.json

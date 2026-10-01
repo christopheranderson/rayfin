@@ -1,0 +1,6 @@
+import { entity, role } from '@microsoft/rayfin-core';
+
+@entity()
+@role('authenticated', 'read')
+export class EmptyEntity {
+}

@@ -1,0 +1,22 @@
+{
+  "name": "rayfin-meta",
+  "private": true,
+  "scripts": {
+    "build": "rush build",
+    "build:watch": "rush build:watch",
+    "clean": "rush clean",
+    "build:force": "rush clean && rush rebuild -- --build --force",
+    "test": "rush test",
+    "test:e2e": "rush test --only tools/cli-tests",
+    "test:watch": "rush test:watch",
+    "format": "rush format",
+    "format:check": "rush format:check",
+    "lint": "rush lint",
+    "lint:fix": "node common/scripts/install-run-rush.js lint",
+    "lint:check": "rush lint:check",
+    "lint:docs": "rush docs:lint",
+    "lint:all": "npm run lint && npm run lint:docs && npm run format",
+    "docs:generate": "rush docs:generate",
+    "bump:npm": "node common/scripts/install-run.js tsx@4.21.0 tsx scripts/bump-npm-version/index.ts"
+  }
+}

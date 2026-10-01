@@ -1,0 +1,142 @@
+{
+  "schemaVersion": "2.0",
+  "functions": [
+    {
+      "functionName": "aliasedAudience",
+      "delegateParameters": [
+        {
+          "name": "ctx",
+          "type": "RayfinContext<DataModel, AudienceType.Sql>",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": false
+        }
+      ],
+      "contextAudiences": ["Sql"]
+    },
+    {
+      "functionName": "literalUnion",
+      "delegateParameters": [
+        {
+          "name": "ctx",
+          "type": "RayfinContext<DataModel, AudienceType.ADO | AudienceType.Sql>",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": false
+        }
+      ],
+      "contextAudiences": ["ADO", "Sql"]
+    },
+    {
+      "functionName": "aliasedNever",
+      "delegateParameters": [
+        {
+          "name": "ctx",
+          "type": "RayfinContext<DataModel, never>",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": false
+        }
+      ],
+      "contextAudiences": []
+    },
+    {
+      "functionName": "narrowedSecrets",
+      "delegateParameters": [
+        {
+          "name": "ctx",
+          "type": "RayfinContext<DataModel, AudienceType.Sql, 'STRIPE_KEY'>",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": false
+        }
+      ],
+      "contextAudiences": ["Sql"]
+    },
+    {
+      "functionName": "annotationAndArray",
+      "delegateParameters": [
+        {
+          "name": "ctx",
+          "type": "RayfinContext<DataModel, AudienceType.Sql>",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": false
+        },
+        {
+          "name": "lakehouseConnection",
+          "type": "FabricSqlConnection",
+          "optional": false,
+          "hasDefault": false,
+          "position": 1,
+          "isFabricParameter": true,
+          "fabricParameterType": "FabricSqlConnection"
+        }
+      ],
+      "contextAudiences": ["Sql"]
+    },
+    {
+      "functionName": "noAudiences",
+      "delegateParameters": [
+        {
+          "name": "ctx",
+          "type": "RayfinContext<DataModel>",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": false
+        }
+      ],
+      "contextAudiences": []
+    },
+    {
+      "functionName": "namedContextParameter",
+      "delegateParameters": [
+        {
+          "name": "context",
+          "type": "RayfinContext<DataModel, AudienceType.Sql>",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": true,
+          "fabricParameterType": "RayfinContext<DataModel, AudienceType.Sql>"
+        }
+      ],
+      "contextAudiences": ["Sql"]
+    },
+    {
+      "functionName": "namedContextSortedUnion",
+      "delegateParameters": [
+        {
+          "name": "context",
+          "type": "RayfinContext<DataModel, AudienceType.ADO | AudienceType.Sql>",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": true,
+          "fabricParameterType": "RayfinContext<DataModel, AudienceType.ADO | AudienceType.Sql>"
+        }
+      ],
+      "contextAudiences": ["ADO", "Sql"]
+    },
+    {
+      "functionName": "businessOnly",
+      "delegateParameters": [
+        {
+          "name": "firstName",
+          "type": "string",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": false
+        }
+      ],
+      "contextAudiences": []
+    }
+  ]
+}

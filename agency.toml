@@ -1,0 +1,4 @@
+[mcps.servers]
+Github = { tools = ["*"], type = "http", url = "https://api.githubcopilot.com/mcp/" }
+playwright = { args = ["@playwright/mcp@latest"], command = "npx", tools = ["*"], type = "stdio" }
+raymcp = { args = ["packages/tools/mcp/scripts/main", "start"], command = "node", tools = ["*"], type = "stdio" }

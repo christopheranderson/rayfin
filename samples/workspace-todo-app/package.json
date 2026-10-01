@@ -1,0 +1,21 @@
+{
+  "name": "workspace-todo-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Multi-package workspace sample — validates rayfin init with a local template",
+  "scripts": {
+    "clean": "node scripts/clean.js",
+    "build": "node scripts/build.js",
+    "test": "node scripts/test.js",
+    "dev": "cd target && npm run dev"
+  },
+  "devDependencies": {
+    "@microsoft/rayfin-auth-provider-fabric": "workspace:*",
+    "@microsoft/rayfin-cli": "workspace:*",
+    "@microsoft/rayfin-client": "workspace:*",
+    "@microsoft/rayfin-core": "workspace:*",
+    "@microsoft/rayfin-data": "workspace:*",
+    "@microsoft/rayfin-functions": "workspace:*"
+  }
+}

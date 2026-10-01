@@ -1,0 +1,26 @@
+id: welcome-app-react-basic
+name: Welcome App (React - No Auth)
+version: 1.0.0
+services:
+  auth:
+    enabled: false
+    password:
+      enabled: false
+    fabric:
+      enabled: false
+    allowedRedirectUris:
+      - http://localhost:5173
+    customClaims:
+      app_version: 1.0.0
+    scopes:
+      - read:data
+      - write:data
+  data:
+    enabled: true
+    dialect: mssql
+  staticHosting:
+    enabled: true
+    folder: dist
+    buildCommand: npm run build:fabric
+    indexDocument: index.html
+    assetAccess: public
