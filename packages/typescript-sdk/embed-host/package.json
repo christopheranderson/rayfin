@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/rayfin-embed-host",
-  "version": "1.36.1",
+  "version": "1.36.2",
   "description": "Parent-page SDK that brokers external-Entra authentication for a Rayfin app embedded in an iframe by a third-party portal",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

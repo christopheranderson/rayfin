@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/rayfin-lib",
-  "version": "1.36.1",
+  "version": "1.36.2",
   "description": "Shared library utilities and HTTP client foundation for the Rayfin platform",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

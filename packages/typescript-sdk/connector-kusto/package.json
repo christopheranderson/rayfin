@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/rayfin-connector-kusto",
-  "version": "1.36.1",
+  "version": "1.36.2",
   "description": "Typed connector marker and query-result normalization for Fabric KQL Database connectors.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

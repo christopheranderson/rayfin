@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/rayfin-connector-fabric-graphql",
-  "version": "1.36.1",
+  "version": "1.36.2",
   "description": "Category A GraphQL-backed connector types for the Rayfin SDK. Provides the entity-oriented marker (GraphQLBackedConnector) and CRUD operation gating used by the typed client.connectors.<name>.<Entity>.select(...).execute() surface.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

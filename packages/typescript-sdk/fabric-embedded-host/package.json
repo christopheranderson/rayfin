@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/fabric-embedded-host",
-  "version": "1.36.1",
+  "version": "1.36.2",
   "description": "Shared postMessage bridge protocol and embedded mode detection for Rayfin SDKs hosted inside Fabric iframes",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

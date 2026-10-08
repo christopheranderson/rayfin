@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/rayfin-app-state-fabric",
-  "version": "1.36.1",
+  "version": "1.36.2",
   "description": "Deep-link application state for Rayfin apps embedded in the Fabric portal",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

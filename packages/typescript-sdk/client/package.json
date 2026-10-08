@@ -1,7 +1,7 @@
 {
   "name": "@microsoft/rayfin-client",
   "sideEffects": false,
-  "version": "1.36.1",
+  "version": "1.36.2",
   "description": "Main client SDK for Rayfin services",
   "type": "module",
   "exports": {

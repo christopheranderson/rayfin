@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/rayfin-mcp",
-  "version": "1.36.1",
+  "version": "1.36.2",
   "description": "Rayfin Model Context Protocol tooling",
   "type": "module",
   "main": "dist/index.js",

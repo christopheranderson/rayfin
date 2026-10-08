@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/rayfin-cli",
-  "version": "1.36.1",
+  "version": "1.36.2",
   "description": "Command-line interface for Rayfin platform",
   "type": "module",
   "main": "dist/index.js",

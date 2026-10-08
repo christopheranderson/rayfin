@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/rayfin-local-dev",
-  "version": "1.36.1",
+  "version": "1.36.2",
   "description": "Local development adapters for Rayfin applications",
   "type": "module",
   "main": "dist/index.js",

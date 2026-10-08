@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/rayfin-storage",
-  "version": "1.36.1",
+  "version": "1.36.2",
   "description": "Type-safe client library for Rayfin storage operations",
   "type": "module",
   "main": "./dist/index.js",

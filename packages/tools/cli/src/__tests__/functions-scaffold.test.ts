@@ -106,7 +106,7 @@ describe('functions scaffold', () => {
   });
 
   it.each(['default', 'workspace'] as const)(
-    'requires an AudienceScope-capable Preview bundle in the %s layout',
+    'requires a Preview bundle with local sign-in fixes in the %s layout',
     async (layout) => {
       const functionsDir =
         layout === 'default'
@@ -126,7 +126,7 @@ describe('functions scaffold', () => {
         version: '2.0',
         extensionBundle: {
           id: 'Microsoft.Azure.Functions.ExtensionBundle.Preview',
-          version: '[4.45.0, 5.0.0)',
+          version: '[4.49.0, 5.0.0)',
         },
         watchDirectories: ['dist'],
       });

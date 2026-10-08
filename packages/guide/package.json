@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/rayfin-guide",
-  "version": "1.36.1",
+  "version": "1.36.2",
   "description": "Cross-cutting Builder guides for the Rayfin platform — discovered by `@microsoft/rayfin-docs` via the `rayfinDocs` package.json field convention.",
   "type": "module",
   "files": [

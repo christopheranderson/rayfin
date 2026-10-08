@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/create-rayfin",
-  "version": "1.36.1",
+  "version": "1.36.2",
   "description": "Scaffold a Rayfin project with `npm init @microsoft/create-rayfin`.",
   "license": "MIT",
   "author": "Microsoft",

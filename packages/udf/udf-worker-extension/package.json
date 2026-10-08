@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/fabric-user-data-functions",
-  "version": "1.36.1",
+  "version": "1.36.2",
   "description": "TypeScript extension for Microsoft Fabric User Data Functions",
   "license": "MIT",
   "author": "Microsoft",

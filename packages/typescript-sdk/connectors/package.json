@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/rayfin-connectors",
-  "version": "1.36.1",
+  "version": "1.36.2",
   "description": "Typed runtime for invoking Rayfin function-bridge connectors (e.g. fabric-semanticmodel).",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

@@ -436,7 +436,7 @@ describe('template bundling', () => {
       version: '2.0',
       extensionBundle: {
         id: 'Microsoft.Azure.Functions.ExtensionBundle.Preview',
-        version: '[4.45.0, 5.0.0)',
+        version: '[4.49.0, 5.0.0)',
       },
       watchDirectories: ['dist'],
     });

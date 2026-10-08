@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/rayfin-data",
-  "version": "1.36.1",
+  "version": "1.36.2",
   "description": "Type-safe client library for Data API Builder endpoints",
   "type": "module",
   "main": "./dist/index.js",

@@ -37,7 +37,8 @@ The gate is therefore about discovery, not enforcement. It stops a fresh scaffol
 
 ## Functions extension bundle compatibility
 
-Local functions scaffolding and the Universal App functions capability kit require Preview `[4.45.0, 5.0.0)`, whose floor includes Fabric extension `1.0.105` and the `FabricItemAttribute.AudienceScope` binding property.
+Local functions scaffolding and the Universal App functions capability kit require Preview `[4.49.0, 5.0.0)`, whose floor includes Fabric extension `1.0.121`, MSAL `4.80.0`, and the `FabricItemAttribute.AudienceScope` binding property.
+This bundle fixes local sign-in on macOS with .NET 10 and on Windows when Core Tools is started by an agent without a console window.
 Keep both local templates aligned.
 Core Tools can reuse a cached bundle within the configured range without checking for updates, so the lower bound must exclude incompatible bundles.
 Existing apps must update their local `host.json` separately; scaffolding changes do not migrate them.
@@ -45,7 +46,7 @@ Existing apps must update their local `host.json` separately; scaffolding change
 Deployment substitutes `assets/functions/host.deploy.json` for the local host configuration.
 Keep its stable bundle ID and independent `[4.38.1, 5.0.0)` floor, which includes Fabric extension `1.0.110`.
 Do not copy Preview version numbers into the stable channel.
-Bundle contents are documented in the [Preview 4.45.0 release](https://github.com/Azure/azure-functions-extension-bundles/releases/tag/4.45.0-Preview) and [stable 4.38.1 release](https://github.com/Azure/azure-functions-extension-bundles/releases/tag/4.38.1).
+Bundle contents are documented in the [Preview 4.49.0 release](https://github.com/Azure/azure-functions-extension-bundles/releases/tag/4.49.0-Preview) and [stable 4.38.1 release](https://github.com/Azure/azure-functions-extension-bundles/releases/tag/4.38.1).
 Binding metadata establishes property support, not an end-to-end ADO token test; verify target-ring bundle availability and token acquisition before shipping a floor change.
 
 ## Command entry points
