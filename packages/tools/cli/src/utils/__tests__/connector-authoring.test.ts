@@ -2,16 +2,24 @@
  * Verifies the connector authoring gate: which types a Builder can reach
  * through `connector add`, `connector types` and `connector search`.
  *
- * The gate is a pure read of the catalog, so these tests need no project
- * fixture and no environment setup.
+ * The gate is a pure read of the catalog and needs no environment setup.
+ * Vocabulary file handling uses temporary documentation fixtures.
  */
 
-import { readFileSync } from 'fs';
+import {
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  unlinkSync,
+  writeFileSync,
+} from 'fs';
+import { tmpdir } from 'os';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
 import { CONNECTOR_CATALOG } from '@microsoft/rayfin-tools-common/_internal/config';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import {
   heldConnectorTypeMessage,
@@ -26,6 +34,16 @@ const repoRoot = resolve(
 const connectorTypePattern = /(?<![-\w])fabric-[a-z0-9-]+\b/gu;
 const connectorTypeCodeSpanPattern = /`(fabric-[a-z0-9-]+)`/gu;
 const connectorTypeQuotedPattern = /(['"])(fabric-[a-z0-9-]+)\1/gu;
+const optionalVocabularyRfc =
+  'docs/rfc/connectors/01_connectors-cli-sdk-surface.md';
+const publicVocabularyFiles = [
+  'openspec/specs/schema-discovery/spec.md',
+  'openspec/specs/sources-yaml-schema/spec.md',
+  'packages/guide/assets/docs/cli/connectors/index.md',
+  'packages/typescript-sdk/connector-fabric-graphql/README.md',
+  'packages/typescript-sdk/connector-fabric-graphql/assets/docs/index.md',
+];
+const vocabularyFiles = [optionalVocabularyRfc, ...publicVocabularyFiles];
 
 function extractConnectorTypeTokens(
   content: string,
@@ -53,6 +71,34 @@ function extractConnectorTypeTokens(
   }
 
   return tokens;
+}
+
+function validateConnectorVocabulary(root: string): void {
+  for (const relativePath of vocabularyFiles) {
+    let content: string;
+    try {
+      content = readFileSync(resolve(root, relativePath), 'utf8');
+    } catch (error) {
+      if (
+        relativePath === optionalVocabularyRfc &&
+        error instanceof Error &&
+        'code' in error &&
+        error.code === 'ENOENT'
+      ) {
+        continue;
+      }
+      throw error;
+    }
+    const tokens = extractConnectorTypeTokens(content, {
+      includeExactCodeSpans: true,
+    });
+    for (const type of tokens) {
+      expect(
+        isKnownConnectorType(type),
+        `${relativePath} presents unknown connector type "${type}"`
+      ).toBe(true);
+    }
+  }
 }
 
 describe('connector authoring gate', () => {
@@ -137,28 +183,68 @@ describe('connector authoring gate', () => {
   });
 
   it('keeps authoritative connector vocabulary aligned with the catalog', () => {
-    const vocabularyFiles = [
-      'docs/rfc/connectors/01_connectors-cli-sdk-surface.md',
-      'openspec/specs/schema-discovery/spec.md',
-      'openspec/specs/sources-yaml-schema/spec.md',
-      'packages/guide/assets/docs/cli/connectors/index.md',
-      'packages/typescript-sdk/connector-fabric-graphql/README.md',
-      'packages/typescript-sdk/connector-fabric-graphql/assets/docs/index.md',
-    ];
+    validateConnectorVocabulary(repoRoot);
+  });
 
-    for (const relativePath of vocabularyFiles) {
-      const filePath = resolve(repoRoot, relativePath);
-      const tokens = extractConnectorTypeTokens(
-        readFileSync(filePath, 'utf8'),
-        { includeExactCodeSpans: true }
-      );
-      for (const type of tokens) {
-        expect(
-          isKnownConnectorType(type),
-          `${relativePath} presents unknown connector type "${type}"`
-        ).toBe(true);
+  describe('authoritative connector vocabulary file handling', () => {
+    let root: string;
+
+    beforeEach(() => {
+      root = mkdtempSync(resolve(tmpdir(), 'rayfin-connector-vocabulary-'));
+      for (const relativePath of vocabularyFiles) {
+        const filePath = resolve(root, relativePath);
+        mkdirSync(dirname(filePath), { recursive: true });
+        writeFileSync(filePath, '`fabric-semanticmodel`');
       }
-    }
+    });
+
+    afterEach(() => {
+      rmSync(root, { recursive: true, force: true });
+    });
+
+    it('validates the RFC when present', () => {
+      expect(() => validateConnectorVocabulary(root)).not.toThrow();
+      writeFileSync(resolve(root, optionalVocabularyRfc), '`fabric-unknown`');
+      expect(() => validateConnectorVocabulary(root)).toThrow(
+        `${optionalVocabularyRfc} presents unknown connector type`
+      );
+    });
+
+    it('allows only the RFC to be absent', () => {
+      unlinkSync(resolve(root, optionalVocabularyRfc));
+      expect(() => validateConnectorVocabulary(root)).not.toThrow();
+    });
+
+    it.each(publicVocabularyFiles)(
+      'still requires %s when the RFC is absent',
+      (relativePath) => {
+        unlinkSync(resolve(root, optionalVocabularyRfc));
+        unlinkSync(resolve(root, relativePath));
+        expect(() => validateConnectorVocabulary(root)).toThrow(
+          expect.objectContaining({ code: 'ENOENT' })
+        );
+      }
+    );
+
+    it.each(publicVocabularyFiles)(
+      'still validates %s when the RFC is absent',
+      (relativePath) => {
+        unlinkSync(resolve(root, optionalVocabularyRfc));
+        writeFileSync(resolve(root, relativePath), '`fabric-unknown`');
+        expect(() => validateConnectorVocabulary(root)).toThrow(
+          `${relativePath} presents unknown connector type`
+        );
+      }
+    );
+
+    it('does not ignore other RFC read errors', () => {
+      const filePath = resolve(root, optionalVocabularyRfc);
+      unlinkSync(filePath);
+      mkdirSync(filePath);
+      expect(() => validateConnectorVocabulary(root)).toThrow(
+        expect.objectContaining({ code: 'EISDIR' })
+      );
+    });
   });
 
   it('rejects a type the catalog does not have at all', () => {
