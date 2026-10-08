@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "tsBuildInfoFile": ".tsbuildinfo",
+    "paths": {
+      "@microsoft/rayfin-connectors": ["../connectors/src"],
+      "@microsoft/rayfin-connectors/*": ["../connectors/src/*"],
+      "@microsoft/rayfin-data": ["../data/src"],
+      "@microsoft/rayfin-data/*": ["../data/src/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"],
+  "references": [{ "path": "../connectors" }, { "path": "../data" }]
+}

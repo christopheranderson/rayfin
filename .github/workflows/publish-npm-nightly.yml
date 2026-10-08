@@ -1,0 +1,42 @@
+name: Publish Packages Nightly (Alpha)
+
+on:
+  schedule:
+    # Run nightly at 04:00 UTC (9 PM PT)
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+
+concurrency: ${{ github.workflow }}
+
+jobs:
+  publish-nightly:
+    if: github.repository == 'microsoft/rayfin'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Check if version is alpha
+        id: pre_check
+        run: |
+          VERSION=$(node -p "require('./packages/typescript-sdk/core/package.json').version")
+          if [[ "$VERSION" != *"alpha"* ]]; then
+            echo "::notice::Version $VERSION is not an alpha version. Skipping nightly publish."
+            echo "is_alpha=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_alpha=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish nightly alpha npm packages
+        id: npm_publish
+        if: steps.pre_check.outputs.is_alpha == 'true'
+        uses: ./.github/actions/publish-npm
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}

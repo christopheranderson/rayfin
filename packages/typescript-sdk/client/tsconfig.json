@@ -1,0 +1,33 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "tsBuildInfoFile": ".tsbuildinfo",
+    "noUnusedLocals": false,
+    "paths": {
+      "@microsoft/rayfin-lib": ["../lib/src"],
+      "@microsoft/rayfin-lib/*": ["../lib/src/*"],
+      "@microsoft/rayfin-auth": ["../auth/src"],
+      "@microsoft/rayfin-auth/*": ["../auth/src/*"],
+      "@microsoft/rayfin-connectors": ["../connectors/src"],
+      "@microsoft/rayfin-connectors/*": ["../connectors/src/*"],
+      "@microsoft/rayfin-data": ["../data/src"],
+      "@microsoft/rayfin-data/*": ["../data/src/*"],
+      "@microsoft/rayfin-functions": ["../functions/src"],
+      "@microsoft/rayfin-functions/*": ["../functions/src/*"],
+      "@microsoft/rayfin-storage": ["../storage/src"],
+      "@microsoft/rayfin-storage/*": ["../storage/src/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules"],
+  "references": [
+    { "path": "../auth" },
+    { "path": "../lib" },
+    { "path": "../connectors" },
+    { "path": "../data" },
+    { "path": "../functions" },
+    { "path": "../storage" }
+  ]
+}

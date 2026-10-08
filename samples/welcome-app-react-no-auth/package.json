@@ -1,0 +1,38 @@
+{
+  "name": "welcome-app-react-basic",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "prebuild": "rayfin env --framework vite",
+    "dev": "rayfin dev",
+    "dev:frontend": "vite",
+    "dev:fabric": "vite",
+    "build": "tsc --build && vite build",
+    "build:fabric": "tsc -b && vite build",
+    "lint": "eslint src --ext ts,tsx",
+    "clean": "rimraf tsconfig.tsbuildinfo && rimraf rayfin/.temp/compiled"
+  },
+  "dependencies": {
+    "@microsoft/rayfin-client": "workspace:*",
+    "@microsoft/rayfin-core": "workspace:*",
+    "@microsoft/rayfin-data": "workspace:*",
+    "@microsoft/rayfin-lib": "workspace:*",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1"
+  },
+  "devDependencies": {
+    "@microsoft/rayfin-cli": "workspace:*",
+    "@microsoft/rayfin-mcp": "workspace:*",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.2",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.8.3",
+    "vite": "^7.3.2"
+  },
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

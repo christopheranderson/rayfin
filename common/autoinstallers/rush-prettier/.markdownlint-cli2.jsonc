@@ -1,0 +1,53 @@
+{
+  // markdownlint-cli2 configuration
+  // See https://github.com/DavidAnson/markdownlint-cli2#configuration
+
+  // Core markdownlint configuration
+  "config": {
+    // Extend prettier style rules
+    //"extends": ".prettierrc.yml",
+
+    // Disable line length limits
+    "line-length": false,
+
+    // Allow duplicate headings if they're not siblings
+    "no-duplicate-heading": {
+      "siblings_only": true,
+    },
+
+    // Allow html tags
+    "no-inline-html": false,
+
+    "no-emphasis-as-heading": false,
+
+    "blanks-around-lists": false,
+
+    "ul-indent": false
+  },
+
+  // Glob patterns to process (can be used instead of command line arguments)
+  "globs": ["**/*.md"],
+
+  // Files and directories to ignore
+  "ignores": [
+    "node_modules/**",
+    "**/node_modules/**",
+    ".git/**",
+    // Copilot instructions, while have md extension, are not treated at Markdown in VS Code
+    "**/.github/**",
+    "**/copilot-instructions.md",
+    "docs/features/**",
+    "docs/prd/**",
+    "openspec/changes/**",
+    ".changeset",
+    "**/*.yaml"
+  ],
+
+  // Automatically use .gitignore patterns
+  "gitignore": true,
+
+  // Output options
+  "noBanner": false,
+  "noProgress": false,
+  "showFound": false,
+}

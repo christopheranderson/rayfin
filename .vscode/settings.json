@@ -1,0 +1,70 @@
+{
+  "files.exclude": {
+    "**/node_modules/": true,
+    // "**/dist/": true,
+    "**/bin/": true,
+    "**/obj/": true,
+    "**/*.tsbuildinfo": true,
+    "**/*.lcl": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/bin": true,
+    "**/obj": true,
+    "**/*.tsbuildinfo": true,
+    "**/*.deps.json": true,
+    "**/*.runtimeconfig.json": true,
+    "**/*.dll": true,
+    "**/*.pdb": true,
+    "**/*.cache": true
+  },
+
+  // Dotnet configuration
+  "dotnet.defaultSolution": "./rayfin.sln",
+
+  // NPM configuration
+  "npm.scriptRunner": "npm",
+  "npm.packageManager": "npm",
+  "npm.exclude": [
+    "**/common/**",
+    "**/packages/**",
+    "**/docs/**",
+    "**/samples/**"
+  ],
+
+  // TypeScript configuration
+  "typescript.preferences.includePackageJsonAutoImports": "on",
+  "typescript.suggest.autoImports": true,
+  "typescript.preferences.importModuleSpecifier": "relative",
+
+  // Vitest configuration
+  "vitest.rootConfig": "./common/autoinstallers/vitest/vitest.config.ts",
+  "vitest.ignoreWorkspace": true,
+  "vitest.maximumConfigs": 15,
+
+  // Markdownlint configuration
+  "markdownlint.configFile": "./common/autoinstallers/rush-prettier/.markdownlint-cli2.jsonc",
+
+  // Prettier configuration
+  "prettier.configPath": "./common/autoinstallers/rush-prettier/.prettierrc.yml",
+  "prettier.ignorePath": "./common/autoinstallers/rush-prettier/.prettierignore",
+  "prettier.prettierPath": "./common/autoinstallers/rush-prettier/node_modules/prettier",
+
+  // ESLint configuration
+  "eslint.options": {
+    "overrideConfigFile": "./common/autoinstallers/rush-prettier/eslint.config.js"
+  },
+  "files.associations": {
+    "rush.json": "jsonc",
+    "**/rush/**/*.json": "jsonc",
+    "**/subspaces/**/*.json": "jsonc",
+    "**/rush-project.json": "jsonc"
+  },
+  "chat.tools.terminal.autoApprove": {
+    "rush": true,
+    "rushx": true,
+    "npx openspec": true,
+    "openspec": true
+  }
+}

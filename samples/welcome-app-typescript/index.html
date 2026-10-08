@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/rayfin.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Project Rayfin</title>
+  </head>
+  <body style="margin: 0; padding: 0">
+    <div id="app">
+      <!-- Navbar -->
+      <header class="rayfin-navbar">
+        <div class="rayfin-logo-container">
+          <div class="rayfin-logo">
+            <img
+              src="rayfin.svg"
+              alt="Rayfin Logo"
+              style="width: 40px; height: 40px"
+            />
+          </div>
+          <span class="rayfin-brand-text">Project Rayfin</span>
+        </div>
+        <nav class="rayfin-nav">
+          <a href="https://github.com/microsoft/project-rayfin" target="_blank"
+            >GitHub</a
+          >
+        </nav>
+      </header>
+
+      <!-- Developer Quickstart Hero -->
+      <section class="rayfin-hero">
+        <div class="rf-container">
+          <h1 class="hero-title">Project Rayfin — Developer Quickstart</h1>
+          <p class="hero-desc">
+            Test the frontend integration with your Rayfin backend below.
+          </p>
+        </div>
+      </section>
+
+      <!-- Test Frontend Integration -->
+      <section class="timestamp-section">
+        <div class="quick-wrapper">
+          <h2 class="quick-title">
+            Test the frontend's calls to the Rayfin backend
+          </h2>
+          <p class="timestamp-readme-hint">
+            This live widget talks to your Rayfin backend. If it is not showing
+            up, run <code>rayfin up</code> from your CLI and then refresh the
+            page.
+          </p>
+          <div id="timestamp-root"></div>
+        </div>
+      </section>
+
+      <!-- Next Steps -->
+      <section style="padding: 2rem 1.25rem; background: #f8fafc">
+        <div class="quick-wrapper">
+          <h2 class="quick-title">Next Steps</h2>
+          <p class="step-desc" style="margin-bottom: 1.5rem">
+            Check out the <strong>README.md</strong> file for detailed steps on
+            how to extend your Rayfin app.
+          </p>
+          <div class="actions-row">
+            <div class="quick-links">
+              <a
+                href="https://github.com/microsoft/project-rayfin"
+                target="_blank"
+                >View the Rayfin repo</a
+              >
+              <span style="color: #94a3b8">•</span>
+              <a
+                href="https://github.com/microsoft/project-rayfin/issues"
+                target="_blank"
+                >Report an issue</a
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

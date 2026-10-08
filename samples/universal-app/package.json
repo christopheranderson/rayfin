@@ -1,0 +1,28 @@
+{
+  "name": "universal-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Rush validation harness for the Builder-facing Universal App template",
+  "scripts": {
+    "clean": "node scripts/clean.js",
+    "build": "node scripts/build.js",
+    "test": "node --test scripts/template-snapshot.test.js && node scripts/test.js",
+    "test:template": "node --test scripts/template-snapshot.test.js && node scripts/test.js",
+    "test:harness": "node --test scripts/template-snapshot.test.js",
+    "link:local-sdk": "node scripts/link-local-sdk.js"
+  },
+  "devDependencies": {
+    "@microsoft/rayfin-auth": "workspace:*",
+    "@microsoft/rayfin-auth-provider-fabric": "workspace:*",
+    "@microsoft/rayfin-cli": "workspace:*",
+    "@microsoft/rayfin-client": "workspace:*",
+    "@microsoft/rayfin-connector-fabric-semanticmodel": "workspace:*",
+    "@microsoft/rayfin-connectors": "workspace:*",
+    "@microsoft/rayfin-core": "workspace:*",
+    "@microsoft/rayfin-data": "workspace:*",
+    "@microsoft/rayfin-guide": "workspace:*",
+    "@microsoft/rayfin-lib": "workspace:*",
+    "@microsoft/rayfin-local-dev": "workspace:*"
+  }
+}

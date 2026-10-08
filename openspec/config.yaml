@@ -1,0 +1,4 @@
+schema: spec-driven
+
+context: |
+  There is additional context available in <PROJECT_ROOT>/openspec/project.md

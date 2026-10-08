@@ -1,0 +1,216 @@
+#!/usr/bin/env node
+// Entry point for the Rayfin CLI.
+//
+// Two execution paths:
+//
+// - Read-only `docs` invocations (e.g. `rayfin docs list --json`) take a
+//   lazy path that loads only the `docs` command subtree and skips
+//   telemetry initialization. This is ~800ms+ faster than the eager path
+//   because it avoids loading MSAL, OpenTelemetry, dotenv, inquirer, ora,
+//   figlet, archiver, and the rest of the CLI command tree.
+//
+// - Everything else takes the eager path which loads the full Commander
+//   entry point and initializes telemetry. That entry point avoids importing
+//   unrelated runtime commands when the invocation selects `init`.
+//
+// Argv-walk routing rules:
+//
+// - Bare `rayfin --help` / `-h` / `help` (no `docs` keyword before the help
+//   token) takes the eager path so `--help` shows the full command tree.
+// - `rayfin docs --help` takes the lazy path. Commander walks to the `docs`
+//   subcommand in the minimal tree and prints the docs help, matching what
+//   the eager path would print for the same invocation.
+// - Bare `rayfin --version` / `-V` takes the eager path.
+// - Unknown global options before any positional fall through to the eager
+//   path so Commander's full-tree validation surfaces them.
+// - The known global flag `-y` / `--yes` is allowed to precede `docs` and
+//   still route lazily.
+
+/**
+ * Conservative argv inspection: only return true if the invocation
+ * unambiguously selects the docs command group. See the routing-rules
+ * block at the top of this file for the exact policy.
+ */
+function isReadOnlyDocsInvocation(argv) {
+  // argv = [nodeBinary, scriptPath, ...userArgs]
+  for (let i = 2; i < argv.length; i += 1) {
+    const arg = argv[i];
+    if (arg === 'docs') {
+      return true;
+    }
+    if (
+      arg === '--help' ||
+      arg === '-h' ||
+      arg === 'help' ||
+      arg === '--version' ||
+      arg === '-V'
+    ) {
+      return false;
+    }
+    // Known global flag with no value; keep walking.
+    if (arg === '-y' || arg === '--yes') {
+      continue;
+    }
+    // Anything else (positional that isn't 'docs', or unknown option) goes
+    // through the eager path so behavior matches Commander's full parse.
+    return false;
+  }
+  return false;
+}
+
+async function runReadOnlyDocs() {
+  const [
+    { Command },
+    { docsCommand },
+    { CliHandledError },
+    { getVersionString },
+  ] = await Promise.all([
+    import('commander'),
+    import('../dist/commands/docs/docs.js'),
+    import('../dist/errors.js'),
+    import('../dist/utils/version.js'),
+  ]);
+
+  const program = new Command()
+    .name('rayfin')
+    .description('Rayfin CLI - read-only docs path')
+    .version(getVersionString())
+    .option('-y, --yes', 'Auto-accept all confirmation prompts', false);
+  program.addCommand(docsCommand);
+
+  try {
+    await program.parseAsync(process.argv);
+  } catch (error) {
+    if (!(error instanceof CliHandledError)) {
+      console.error(error instanceof Error ? error.message : String(error));
+    }
+    process.exitCode = 1;
+  }
+}
+
+async function runFullCli() {
+  const [{ cli }, errors, telemetry] = await Promise.all([
+    import('../dist/index.js'),
+    import('../dist/errors.js'),
+    import('../dist/telemetry/index.js'),
+  ]);
+  const { CliCancelledError, CliHandledError, classifyCliError } = errors;
+  const {
+    initTelemetry,
+    markCurrentContextCancelled,
+    markCurrentContextFailure,
+    shutdownTelemetry,
+  } = telemetry;
+
+  try {
+    await initTelemetry();
+    await cli.parseAsync(process.argv);
+
+    // If no command specified, show help.
+    if (!process.argv.slice(2).length) {
+      cli.outputHelp();
+    }
+  } catch (error) {
+    process.exitCode = classifyCliError(error).exitCode;
+    if (error instanceof CliCancelledError) {
+      // Record cancellation under the dedicated `Canceled` telemetry
+      // category (distinct from both UserFault and Failure) and emit a
+      // distinct exit code (2) so machine consumers can tell "user said
+      // no" apart from "operation crashed" (1).
+      markCurrentContextCancelled();
+      // Don't print to stderr - the handler already emitted a friendly
+      // "Operation cancelled" message before throwing.
+    } else if (error instanceof Error && error.name === 'ExitPromptError') {
+      // User hit Ctrl-C inside an inquirer prompt. Mirrors the same
+      // branch in create-rayfin/src/index.ts: log a friendly message,
+      // record telemetry as user-fault (not a crash), exit 0. Distinct
+      // from CliCancelledError (which is a deliberate command-stage
+      // decline -> exit 2); ExitPromptError is a "user pressed Ctrl-C
+      // before deciding" -> benign exit 0.
+      console.log('\nOperation cancelled.');
+      markCurrentContextFailure(error);
+    } else {
+      // Derive the underlying error for telemetry recording.
+      const underlying =
+        error instanceof CliHandledError ? error.originalError : error;
+      const telemetryError =
+        underlying instanceof Error
+          ? underlying
+          : new Error(String(underlying));
+      markCurrentContextFailure(telemetryError);
+
+      // Only print when the command handler has NOT already displayed the
+      // message (CliHandledError signals it was already shown).
+      if (!(error instanceof CliHandledError)) {
+        console.error(error instanceof Error ? error.message : String(error));
+      }
+    }
+  } finally {
+    await shutdownTelemetry();
+  }
+}
+
+async function main() {
+  if (isReadOnlyDocsInvocation(process.argv)) {
+    await runReadOnlyDocs();
+  } else {
+    await runFullCli();
+  }
+}
+
+/**
+ * Drain stdout/stderr before the process is torn down.
+ *
+ * `process.exit()` stops the event loop immediately, so anything still
+ * buffered in a stdio stream is discarded. On Windows those streams are
+ * asynchronous when the CLI is piped (the common case for agents and CI),
+ * so the user's last line — including a success message — can be lost
+ * even though the command completed.
+ *
+ * Yielding here also gives already-scheduled `uv_close` callbacks a turn
+ * to run before teardown, which matters on Windows: native dependencies
+ * (`@azure/msal-node-extensions`' DPAPI/keytar bindings) signal
+ * completion from the libuv threadpool through a `uv_async_t`, and
+ * tearing the loop down mid-close is what surfaces as
+ * `Assertion failed: !(handle->flags & UV_HANDLE_CLOSING)`.
+ *
+ * Bounded so a wedged pipe can never hold the user at their prompt.
+ */
+function flushStdio(timeoutMs = 250) {
+  const drain = (stream) =>
+    new Promise((resolve) => {
+      // `writableLength === 0` means nothing is buffered; the extra
+      // `write` would otherwise queue work on an already-idle stream.
+      if (!stream || stream.writableEnded || stream.writableLength === 0) {
+        resolve();
+        return;
+      }
+      stream.write('', () => resolve());
+    });
+
+  return Promise.race([
+    Promise.all([drain(process.stdout), drain(process.stderr)]),
+    new Promise((resolve) => setTimeout(resolve, timeoutMs).unref()),
+  ]);
+}
+
+main()
+  .catch((error) => {
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exitCode = 1;
+  })
+  .finally(async () => {
+    // Telemetry shutdown is bounded by a timeout, but the underlying
+    // HTTPS request may still be in flight and would otherwise keep
+    // the event loop alive past the user's last visible message.
+    // Exit explicitly so the user always returns to their prompt
+    // promptly. (The lazy docs path doesn't init telemetry, so it
+    // exits even faster.)
+    //
+    // Flush first so the exit never truncates output the command
+    // already produced — command handlers signal failure by throwing
+    // (see `CliHandledError`), never by calling `process.exit()`, so
+    // this is the single exit point for every invocation.
+    await flushStdio();
+    process.exit(process.exitCode ?? 0);
+  });

@@ -1,0 +1,14 @@
+{
+  "readme": "./assets/docs/index.md",
+  "intentionallyNotExported": [
+    "NoReadAfterWriteConnectorType",
+    "GuardInvalidPk",
+    "ResolvedPkColumns",
+    "BuilderFor",
+    "CreateInput",
+    "ScalarColumnsOf",
+    "ConnectorFieldSelection",
+    "Row",
+    "UpdateInput"
+  ]
+}

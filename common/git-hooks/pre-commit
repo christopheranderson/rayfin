@@ -1,0 +1,52 @@
+#!/bin/sh
+# Called by "git commit" with no arguments.  The hook should
+# exit with non-zero status after issuing an appropriate message if
+# it wants to stop the commit.
+
+# Only format/lint staged files instead of the entire repo for speed.
+# Get list of staged files (excluding deleted files).
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=d)
+
+if [ -z "$STAGED_FILES" ]; then
+  exit 0
+fi
+
+AUTOINSTALLER_DIR="common/autoinstallers/rush-prettier"
+AUTOINSTALLER_BIN="$AUTOINSTALLER_DIR/node_modules/.bin"
+
+# The autoinstaller should already be set up by rush install/update.
+# If the binaries are missing, fall back to a full rush format.
+if [ ! -x "$AUTOINSTALLER_BIN/prettier" ]; then
+  node common/scripts/install-run-rush.js format || exit $?
+  node common/scripts/install-run-rush.js lint || exit $?
+  node common/scripts/install-run-rush.js docs:lint --fix || exit $?
+  exit 0
+fi
+
+# Filter files by type for each tool
+CODE_FILES=$(echo "$STAGED_FILES" | grep -E '\.(ts|tsx|js|jsx|json|css|scss|html|yaml|yml)$' || true)
+MD_FILES=$(echo "$STAGED_FILES" | grep -E '\.md$' || true)
+
+# Run prettier only on staged files
+FORMAT_FILES=$(printf '%s\n%s' "$CODE_FILES" "$MD_FILES" | sed '/^$/d' | sort -u)
+if [ -n "$FORMAT_FILES" ]; then
+  echo "$FORMAT_FILES" | xargs "$AUTOINSTALLER_BIN/prettier" \
+    --config "$AUTOINSTALLER_DIR/.prettierrc.yml" \
+    --ignore-path "$AUTOINSTALLER_DIR/.prettierignore" \
+    --write || exit $?
+fi
+
+# Run eslint only on staged JS/TS files
+LINT_FILES=$(echo "$STAGED_FILES" | grep -E '\.(ts|tsx|js|jsx)$' || true)
+if [ -n "$LINT_FILES" ]; then
+  echo "$LINT_FILES" | xargs "$AUTOINSTALLER_BIN/eslint" \
+    -c "$AUTOINSTALLER_DIR/eslint.config.js" \
+    --fix || exit $?
+fi
+
+# Run markdownlint only on staged markdown files
+if [ -n "$MD_FILES" ]; then
+  echo "$MD_FILES" | xargs "$AUTOINSTALLER_BIN/markdownlint-cli2" \
+    --config "$AUTOINSTALLER_DIR/.markdownlint-cli2.jsonc" \
+    --fix || exit $?
+fi

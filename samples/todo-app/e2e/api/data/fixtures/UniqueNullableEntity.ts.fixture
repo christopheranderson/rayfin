@@ -1,0 +1,24 @@
+import {
+  entity,
+  role,
+  uuid,
+  text,
+  int,
+  boolean,
+  date,
+} from '@microsoft/rayfin-core';
+
+@entity()
+@role('authenticated', '*', {
+  policy: (claims, item) => claims.sub.eq(item.user_id),
+})
+export class UniqueNullableEntity {
+  @uuid() id!: string;
+  @text() name!: string;
+  @text({ unique: true, optional: true }) slug?: string;
+  @int() value!: number;
+  @boolean() active!: boolean;
+  @date() createdAt!: Date;
+
+  @text() user_id!: string;
+}

@@ -1,0 +1,59 @@
+// Validation-only TypeDoc config used by `rush lint` / `rush lint:check`.
+// No plugins, no output — TypeDoc runs in `emit: none` mode purely to surface
+// broken {@link} references and other docstring issues at lint time.
+//
+// Keep entry points in sync with the set of packages whose TSDoc we want to
+// gate on. Packages under tools/, samples/, and host/ are intentionally not
+// covered here (yet).
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "../../../packages/typescript-sdk/app-state-fabric",
+    "../../../packages/typescript-sdk/auth",
+    "../../../packages/typescript-sdk/auth-provider-fabric",
+    "../../../packages/typescript-sdk/client",
+    "../../../packages/typescript-sdk/connector-kusto",
+    "../../../packages/typescript-sdk/core",
+    "../../../packages/typescript-sdk/data",
+    "../../../packages/typescript-sdk/embed-host",
+    "../../../packages/typescript-sdk/fabric-embedded-host",
+    "../../../packages/typescript-sdk/functions",
+    "../../../packages/typescript-sdk/lib",
+    "../../../packages/typescript-sdk/storage",
+    "../../../packages/tools/cli",
+    "../../../packages/tools/create-rayfin",
+    "../../../packages/tools/docs-lib",
+    "../../../packages/tools/local-dev",
+    "../../../packages/tools/mcp"
+  ],
+  "entryPointStrategy": "packages",
+  "emit": "none",
+  "treatWarningsAsErrors": true,
+  "validation": {
+    "invalidLink": true,
+    "notExported": true,
+    "rewrittenLink": true
+  },
+  "excludeInternal": true,
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "packageOptions": {
+    "entryPoints": ["./src/index.ts"],
+    "entryPointStrategy": "resolve",
+    "excludeInternal": true,
+    "excludePrivate": true,
+    "excludeProtected": true,
+    "validation": {
+      "invalidLink": true,
+      "notExported": true,
+      "rewrittenLink": true
+    }
+  },
+  "exclude": [
+    "**/node_modules/**",
+    "**/samples/**",
+    "**/tests/**",
+    "**/__tests__/**",
+    "**/dist/**"
+  ]
+}

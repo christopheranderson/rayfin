@@ -1,0 +1,118 @@
+// Shared CLI <-> worker parity fixture.
+//
+// `packages/tools/cli` generates runtime metadata from this source and asserts
+// it matches `parity-runtimemetadata.json` exactly. The worker then feeds that
+// same JSON into `UserDataFunctions` and asserts the bindings it registers
+// match the audiences the CLI wrote into the deploy metadata.
+//
+// Neither side may regenerate the golden on its own: if the two analyzers ever
+// disagree again, one of the two tests fails.
+//
+// The SDK is not installed in the temporary project the CLI test scaffolds, so
+// the types used here are declared locally with the same shapes.
+
+class UserDataFunctions {
+  func(name: string, handler: any, connections?: any[]): void {}
+  connection(options: any): any {
+    return options;
+  }
+}
+
+const udf = new UserDataFunctions();
+
+enum AudienceType {
+  Sql = 'Sql',
+  ADO = 'ADO',
+  Fabric = 'Fabric',
+}
+
+class RayfinContext<
+  TSchema = any,
+  TokenTypes extends AudienceType = never,
+  TSecretNames extends string = never,
+> {}
+
+class FabricSqlConnection {}
+
+type DataModel = { Todo: { id: string } };
+
+// The case this fixture exists for. The checker resolves this to `Sql`, but the
+// annotation text says `SqlAccess`, so an un-normalised annotation leaves the
+// worker unable to bind the connection the deploy metadata declares.
+type SqlAccess = AudienceType.Sql;
+
+// An alias that resolves to no audiences at all.
+type NoAccess = never;
+
+udf.func(
+  'aliasedAudience',
+  async (ctx: RayfinContext<DataModel, SqlAccess>): Promise<string> => 'ok',
+  []
+);
+
+udf.func(
+  'literalUnion',
+  async (
+    ctx: RayfinContext<DataModel, AudienceType.Sql | AudienceType.ADO>
+  ): Promise<string> => 'ok',
+  []
+);
+
+udf.func(
+  'aliasedNever',
+  async (ctx: RayfinContext<DataModel, NoAccess>): Promise<string> => 'ok',
+  []
+);
+
+// Narrowed secret names in the third type argument must survive normalisation.
+udf.func(
+  'narrowedSecrets',
+  async (
+    ctx: RayfinContext<DataModel, SqlAccess, 'STRIPE_KEY'>
+  ): Promise<string> => 'ok',
+  []
+);
+
+// Annotation audiences union with array audiences; the alias connection keeps
+// its own binding.
+udf.func(
+  'annotationAndArray',
+  async (
+    ctx: RayfinContext<DataModel, SqlAccess>,
+    lakehouseConnection: FabricSqlConnection
+  ): Promise<string> => 'ok',
+  [
+    udf.connection({ audienceType: AudienceType.Sql }),
+    udf.connection({ audienceType: AudienceType.Fabric }),
+    udf.connection({ alias: 'myLakehouse', argName: 'lakehouseConnection' }),
+  ]
+);
+
+udf.func(
+  'noAudiences',
+  async (ctx: RayfinContext<DataModel>): Promise<string> => 'ok',
+  []
+);
+
+// A context parameter named `context` is classified as a Fabric parameter by
+// name, so it also carries `fabricParameterType`. `validateRuntimeMetadata`
+// requires that to equal `type`, which means normalisation has to touch both —
+// otherwise the whole metadata file is rejected and the worker falls back to
+// full source parsing.
+udf.func(
+  'namedContextParameter',
+  async (context: RayfinContext<DataModel, SqlAccess>): Promise<string> => 'ok',
+  []
+);
+
+// The same mismatch appears without any alias, because normalisation sorts a
+// literal union into binding order.
+udf.func(
+  'namedContextSortedUnion',
+  async (
+    context: RayfinContext<DataModel, AudienceType.Sql | AudienceType.ADO>
+  ): Promise<string> => 'ok',
+  []
+);
+
+udf.func('businessOnly', (firstName: string): string => firstName, []);

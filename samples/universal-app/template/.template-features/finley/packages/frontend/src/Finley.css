@@ -1,0 +1,437 @@
+.app-welcome__trail {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.app-welcome__path {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 44px;
+  height: 44px;
+  animation: app-welcome-stroll var(--scene-duration) linear both;
+}
+.app-welcome__traveler {
+  position: relative;
+  display: block;
+  width: 44px;
+  height: 44px;
+  padding: 6px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--welcome-accent);
+  cursor: pointer;
+  touch-action: manipulation;
+  pointer-events: auto;
+}
+.app-welcome__traveler:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: -2px;
+}
+.app-welcome__traveler > * {
+  pointer-events: none;
+}
+.app-welcome__character,
+.app-welcome__gesture {
+  position: relative;
+  display: block;
+  width: 32px;
+  height: 32px;
+  transform-origin: 50% 85%;
+}
+.app-welcome__gesture > .fabric-app-mark {
+  display: block;
+  width: 32px;
+  height: 32px;
+}
+.app-welcome__eyes {
+  position: absolute;
+  top: 10px;
+  left: 17px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 3px;
+}
+.app-welcome__eyes i {
+  width: 2px;
+  height: 3px;
+  border-radius: 50%;
+  background: #16465a;
+}
+.app-welcome__smile {
+  position: absolute;
+  top: 15px;
+  left: 19px;
+  width: 5px;
+  height: 3px;
+  border-bottom: 1px solid #16465a;
+  border-radius: 50%;
+}
+.app-welcome__hand {
+  position: absolute;
+  top: 15px;
+  right: -3px;
+  width: 9px;
+  height: 8px;
+  transform-origin: 0 100%;
+}
+.app-welcome__hand::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: solid #16bfdf;
+  border-width: 0 0 2px 2px;
+  border-radius: 0 0 0 6px;
+  transform-origin: 0 100%;
+}
+.app-welcome__feet {
+  position: absolute;
+  top: 28px;
+  left: 11px;
+  display: flex;
+  gap: 5px;
+}
+.app-welcome__feet i {
+  width: 6px;
+  height: 5px;
+  border: solid #0067bf;
+  border-width: 0 0 2px 2px;
+  border-radius: 0 0 0 3px;
+  transform-origin: top;
+}
+.app-welcome__character-shadow {
+  position: absolute;
+  left: 14px;
+  bottom: 1px;
+  width: 19px;
+  height: 3px;
+  background: var(--color-muted-foreground);
+  opacity: 0.15;
+  border-radius: 50%;
+}
+.app-welcome__parcel {
+  position: absolute;
+  right: -5px;
+  top: 21px;
+  width: 9px;
+  height: 9px;
+  border: 1px solid #126e6533;
+  border-radius: 2px;
+  background: linear-gradient(135deg, #9bf3af, #16bfdf);
+  transform: rotate(-8deg);
+  opacity: 0;
+}
+.app-welcome__hammer {
+  position: absolute;
+  right: -4px;
+  top: 12px;
+  width: 3px;
+  height: 13px;
+  background: #98795a;
+  border-radius: 2px;
+  transform-origin: 50% 95%;
+  opacity: 0;
+}
+.app-welcome__hammer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -4px;
+  width: 11px;
+  height: 5px;
+  border-radius: 2px;
+  background: #71b9bf;
+}
+.app-welcome__thought {
+  position: absolute;
+  top: -12px;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  width: 32px;
+  height: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-card);
+  opacity: 0;
+}
+.app-welcome__thought::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 7px;
+  width: 5px;
+  height: 5px;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background: var(--color-card);
+}
+.app-welcome__thought i {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--welcome-accent);
+}
+.app-welcome__twinkles {
+  position: absolute;
+  inset: 0;
+}
+.app-welcome__twinkles i {
+  position: absolute;
+  top: 2px;
+  left: -3px;
+  width: 7px;
+  height: 7px;
+  opacity: 0;
+}
+.app-welcome__twinkles i:nth-child(2) {
+  top: -5px;
+  left: 21px;
+}
+.app-welcome__twinkles i:nth-child(3) {
+  top: 14px;
+  left: 34px;
+}
+.app-welcome__twinkles i::before,
+.app-welcome__twinkles i::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  width: 7px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--welcome-accent);
+}
+.app-welcome__twinkles i::after {
+  transform: rotate(90deg);
+}
+
+.app-welcome__traveler[data-behavior='idle'] .app-welcome__character {
+  animation: app-welcome-breathe 3s ease-in-out infinite;
+}
+.app-welcome__traveler[data-behavior='walk'] .app-welcome__character {
+  animation: app-welcome-stride 0.5s ease-in-out infinite;
+}
+.app-welcome__traveler[data-behavior='walk'] .app-welcome__feet i {
+  animation: app-welcome-step 0.5s ease-in-out infinite;
+}
+.app-welcome__traveler[data-behavior='walk'] .app-welcome__feet i:last-child {
+  animation-delay: -0.25s;
+}
+.app-welcome__traveler[data-behavior='look'] .app-welcome__character {
+  transform: rotate(-7deg);
+}
+.app-welcome__traveler:is([data-behavior='look'], [data-behavior='think'])
+  .app-welcome__eyes {
+  transform: translate(-1px, -1px);
+}
+.app-welcome__traveler[data-behavior='think'] .app-welcome__thought {
+  opacity: 1;
+}
+.app-welcome__traveler[data-behavior='think'] .app-welcome__thought i {
+  animation: app-welcome-think 1.8s ease-in-out infinite;
+}
+.app-welcome__traveler[data-behavior='think']
+  .app-welcome__thought
+  i:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.app-welcome__traveler[data-behavior='think']
+  .app-welcome__thought
+  i:nth-child(3) {
+  animation-delay: 0.4s;
+}
+.app-welcome__traveler[data-carrying='true'] .app-welcome__parcel {
+  opacity: 1;
+}
+.app-welcome__traveler[data-behavior='build'] .app-welcome__character {
+  animation: app-welcome-place-bend var(--scene-duration) ease-in-out both;
+}
+.app-welcome__traveler[data-behavior='build'] .app-welcome__parcel {
+  animation: app-welcome-place var(--scene-duration) ease-in-out both;
+}
+.app-welcome__traveler[data-behavior='build'] .app-welcome__hammer {
+  opacity: 1;
+  animation: app-welcome-tap 0.32s ease-in-out 3;
+}
+.app-welcome__traveler[data-behavior='build'] .app-welcome__twinkles i {
+  animation: app-welcome-twinkle 1.2s ease-out both;
+}
+.app-welcome__traveler[data-behavior='peek'] .app-welcome__character {
+  transform: rotate(12deg) translateY(2px);
+}
+.app-welcome__traveler[data-behavior='wave'] .app-welcome__hand::before {
+  animation: app-welcome-hello 0.3s ease-in-out 3;
+}
+.app-welcome__traveler[data-reaction='wave'] .app-welcome__hand::before {
+  animation: app-welcome-hello 0.25s ease-in-out 3;
+}
+.app-welcome__traveler:is([data-reaction='hop'], [data-reaction='celebrate'])
+  .app-welcome__gesture {
+  animation: app-welcome-hop 0.8s ease-in-out both;
+}
+.app-welcome__traveler:is(
+    [data-reaction='sparkle'],
+    [data-reaction='celebrate']
+  )
+  .app-welcome__twinkles
+  i {
+  animation: app-welcome-twinkle 0.85s ease-out both;
+}
+.app-welcome__traveler[data-reaction='wink'] .app-welcome__eyes i:last-child {
+  height: 1px;
+  border-radius: 1px;
+}
+.app-welcome__traveler[data-reaction='wink'] .app-welcome__smile {
+  width: 6px;
+}
+.app-welcome__trail[data-greeting='true'] .app-welcome__gesture,
+.app-welcome__trail[data-greeting='true'] .app-welcome__hand::before,
+.app-welcome__trail[data-greeting='true'] .app-welcome__twinkles i {
+  animation-play-state: running !important;
+}
+
+@keyframes app-welcome-stroll {
+  from {
+    transform: translate(var(--from-x), var(--from-y));
+  }
+  35% {
+    transform: translate(var(--via-x), var(--from-y));
+  }
+  65% {
+    transform: translate(var(--via-x), var(--to-y));
+  }
+  to {
+    transform: translate(var(--to-x), var(--to-y));
+  }
+}
+@keyframes app-welcome-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+@keyframes app-welcome-stride {
+  0%,
+  100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: translateY(-1px) rotate(3deg);
+  }
+}
+@keyframes app-welcome-step {
+  0%,
+  100% {
+    transform: rotate(-14deg);
+  }
+  50% {
+    transform: translateY(-2px) rotate(18deg);
+  }
+}
+@keyframes app-welcome-hello {
+  0%,
+  100% {
+    transform: rotate(-70deg);
+  }
+  50% {
+    transform: rotate(-130deg);
+  }
+}
+@keyframes app-welcome-place-bend {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  35%,
+  55% {
+    transform: rotate(10deg) translateY(2px);
+  }
+}
+@keyframes app-welcome-place {
+  0%,
+  30% {
+    opacity: 1;
+    translate: 0 0;
+  }
+  60%,
+  80% {
+    opacity: 1;
+    translate: -8px 9px;
+    transform: rotate(0);
+  }
+  100% {
+    opacity: 0;
+    translate: -8px 9px;
+  }
+}
+@keyframes app-welcome-tap {
+  0%,
+  100% {
+    transform: rotate(-30deg);
+  }
+  50% {
+    transform: rotate(45deg);
+  }
+}
+@keyframes app-welcome-think {
+  0%,
+  70%,
+  100% {
+    opacity: 0.4;
+  }
+  35% {
+    opacity: 1;
+  }
+}
+@keyframes app-welcome-hop {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  15% {
+    transform: scale(1.05, 0.93);
+  }
+  40% {
+    transform: translateY(-9px) rotate(-5deg);
+  }
+  65% {
+    transform: translateY(0) scale(1.04, 0.96);
+  }
+}
+@keyframes app-welcome-twinkle {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  35% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1);
+  }
+  85% {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.7);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-welcome__path {
+    transform: translate(var(--to-x), var(--to-y));
+  }
+  .app-welcome__parcel,
+  .app-welcome__hammer,
+  .app-welcome__twinkles,
+  .app-welcome__area-pulse {
+    opacity: 0 !important;
+  }
+}

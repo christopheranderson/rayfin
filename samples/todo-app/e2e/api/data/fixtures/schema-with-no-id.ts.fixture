@@ -1,0 +1,15 @@
+import { Category } from './Category.js';
+import { NoIdEntity } from './NoIdEntity.js';
+import { TestEntity1 } from './TestEntity1.js';
+import { TestEntity2 } from './TestEntity2.js';
+import { Todo } from './Todo.js';
+
+export type TodoAppSchema = {
+  Todo: Todo;
+  Category: Category;
+  TestEntity1: TestEntity1;
+  TestEntity2: TestEntity2;
+  NoIdEntity: NoIdEntity;
+};
+
+export const schema = [Todo, Category, TestEntity1, TestEntity2, NoIdEntity];

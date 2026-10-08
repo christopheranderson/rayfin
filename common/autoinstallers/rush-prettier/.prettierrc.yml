@@ -1,0 +1,6 @@
+# See https://prettier.io/docs/options for options
+
+# Automatically extends .editorconfig
+singleQuote: true
+trailingComma: 'es5'
+bracketSpacing: true

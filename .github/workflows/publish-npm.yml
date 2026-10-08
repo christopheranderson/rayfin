@@ -1,0 +1,59 @@
+name: Publish Packages
+
+on:
+  push:
+    branches:
+      - main
+      - 'release/*'
+  workflow_dispatch:
+    inputs:
+      force_alpha_publish:
+        description: 'Force publish even if version contains "alpha" (adds .N suffix)'
+        required: false
+        type: boolean
+        default: false
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  publish:
+    if: github.repository == 'microsoft/rayfin'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      pull-requests: write
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read package version (pre-check)
+        id: pre_check
+        run: |
+          VERSION=$(node -p "require('./packages/typescript-sdk/core/package.json').version")
+          if [[ "$VERSION" == *"alpha"* ]]; then
+            echo "is_alpha=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_alpha=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Skip alpha publish
+        if: steps.pre_check.outputs.is_alpha == 'true' && inputs.force_alpha_publish != true
+        run: |
+          echo "::notice::Skipping publish — version is an alpha pre-release. Use force_alpha_publish override to publish."
+
+      - name: Configure Git identity
+        if: steps.pre_check.outputs.is_alpha != 'true' || inputs.force_alpha_publish == true
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Publish npm packages
+        id: npm_publish
+        if: steps.pre_check.outputs.is_alpha != 'true' || inputs.force_alpha_publish == true
+        uses: ./.github/actions/publish-npm
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}

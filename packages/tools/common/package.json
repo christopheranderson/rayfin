@@ -1,0 +1,177 @@
+{
+  "name": "@microsoft/rayfin-tools-common",
+  "version": "1.36.2",
+  "description": "Shared utilities for Rayfin tools packages",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./_internal": {
+      "import": "./dist/internal.js",
+      "types": "./dist/internal.d.ts"
+    },
+    "./package.json": "./package.json",
+    "./_internal/adapters": {
+      "import": "./dist/adapters/index.js",
+      "types": "./dist/adapters/index.d.ts"
+    },
+    "./_internal/auth": {
+      "import": "./dist/auth/index.js",
+      "types": "./dist/auth/index.d.ts"
+    },
+    "./_internal/env-config": {
+      "import": "./dist/env-config/index.js",
+      "types": "./dist/env-config/index.d.ts"
+    },
+    "./_internal/external/fabric": {
+      "import": "./dist/external/fabric/index.js",
+      "types": "./dist/external/fabric/index.d.ts"
+    },
+    "./_internal/services/auth": {
+      "import": "./dist/services/auth/index.js",
+      "types": "./dist/services/auth/index.d.ts"
+    },
+    "./_internal/services/connectors": {
+      "import": "./dist/services/connectors/index.js",
+      "types": "./dist/services/connectors/index.d.ts"
+    },
+    "./_internal/services/data": {
+      "import": "./dist/services/data/index.js",
+      "types": "./dist/services/data/index.d.ts"
+    },
+    "./_internal/services/auth-sdk": {
+      "import": "./dist/services/auth-sdk/index.js",
+      "types": "./dist/services/auth-sdk/index.d.ts"
+    },
+    "./_internal/services/package-inventory": {
+      "import": "./dist/services/package-inventory/index.js",
+      "types": "./dist/services/package-inventory/index.d.ts"
+    },
+    "./_internal/services/deployment-registry": {
+      "import": "./dist/services/deployment-registry/index.js",
+      "types": "./dist/services/deployment-registry/index.d.ts"
+    },
+    "./_internal/services/dev-redirect": {
+      "import": "./dist/services/dev-redirect/index.js",
+      "types": "./dist/services/dev-redirect/index.d.ts"
+    },
+    "./_internal/services/framework-env": {
+      "import": "./dist/services/framework-env/index.js",
+      "types": "./dist/services/framework-env/index.d.ts"
+    },
+    "./_internal/services/functions": {
+      "import": "./dist/services/functions/index.js",
+      "types": "./dist/services/functions/index.d.ts"
+    },
+    "./_internal/services/project-telemetry": {
+      "import": "./dist/services/project-telemetry/index.js",
+      "types": "./dist/services/project-telemetry/index.d.ts"
+    },
+    "./_internal/services/runtime-config": {
+      "import": "./dist/services/runtime-config/index.js",
+      "types": "./dist/services/runtime-config/index.d.ts"
+    },
+    "./_internal/services/runtime-settings": {
+      "import": "./dist/services/runtime-settings/index.js",
+      "types": "./dist/services/runtime-settings/index.d.ts"
+    },
+    "./_internal/services/static-hosting": {
+      "import": "./dist/services/static-hosting/index.js",
+      "types": "./dist/services/static-hosting/index.d.ts"
+    },
+    "./_internal/services/storage": {
+      "import": "./dist/services/storage/index.js",
+      "types": "./dist/services/storage/index.d.ts"
+    },
+    "./_internal/services/user-license": {
+      "import": "./dist/services/user-license/index.js",
+      "types": "./dist/services/user-license/index.d.ts"
+    },
+    "./_internal/workflows/up": {
+      "import": "./dist/workflows/up/index.js",
+      "types": "./dist/workflows/up/index.d.ts"
+    },
+    "./_internal/workflows/fabric-readiness": {
+      "import": "./dist/workflows/fabric-readiness/index.js",
+      "types": "./dist/workflows/fabric-readiness/index.d.ts"
+    },
+    "./_internal/workflows/dev": {
+      "import": "./dist/workflows/dev/index.js",
+      "types": "./dist/workflows/dev/index.d.ts"
+    },
+    "./_internal/workflows/ensure-user-license": {
+      "import": "./dist/workflows/ensure-user-license/index.js",
+      "types": "./dist/workflows/ensure-user-license/index.d.ts"
+    },
+    "./_internal/checks": {
+      "import": "./dist/checks/index.js",
+      "types": "./dist/checks/index.d.ts"
+    },
+    "./_internal/config": {
+      "import": "./dist/config/index.js",
+      "types": "./dist/config/index.d.ts"
+    },
+    "./_internal/templates": {
+      "import": "./dist/templates/index.js",
+      "types": "./dist/templates/index.d.ts"
+    },
+    "./_internal/templates/git": {
+      "import": "./dist/templates/git/index.js",
+      "types": "./dist/templates/git/index.d.ts"
+    },
+    "./_internal/templates/universal": {
+      "import": "./dist/templates/universal.js",
+      "types": "./dist/templates/universal.d.ts"
+    },
+    "./_internal/telemetry": {
+      "import": "./dist/telemetry/index.js",
+      "types": "./dist/telemetry/index.d.ts"
+    },
+    "./_internal/utils/retry": {
+      "import": "./dist/utils/retry/index.js",
+      "types": "./dist/utils/retry/index.d.ts"
+    },
+    "./_internal/workflows": {
+      "import": "./dist/workflows/index.js",
+      "types": "./dist/workflows/index.d.ts"
+    }
+  },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "!dist/**/__tests__/**",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "clean": "rimraf dist .tsbuildinfo",
+    "test": "vitest --run"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/microsoft/rayfin.git",
+    "directory": "packages/tools/common"
+  },
+  "dependencies": {
+    "tar": "~7.5.15",
+    "yaml": "^2.8.2",
+    "zod": "~4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.10",
+    "rimraf": "~6.0.1",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.3",
+    "@vitest/coverage-v8": "~3.2.4"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,28 @@
+{
+  "name": "rayfin-cli-e2e",
+  "version": "0.0.0",
+  "private": true,
+  "description": "E2E tests for the Rayfin CLI against live Fabric environments",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --build",
+    "clean": "rimraf dist .tsbuildinfo",
+    "test": "echo Skipped: E2E tests run in dedicated pipeline only",
+    "test:e2e": "vitest run --config vitest.config.ts --reporter=default --reporter=junit --outputFile.junit=test-results/e2e-results.xml",
+    "test:e2e:coverage": "vitest run --config vitest.config.ts --coverage --reporter=default --reporter=junit --outputFile.junit=test-results/e2e-results.xml",
+    "test:e2e:watch": "vitest watch --config vitest.config.ts",
+    "test:e2e:browser": "playwright test --config playwright.config.ts"
+  },
+  "dependencies": {
+    "@microsoft/rayfin-cli": "workspace:*"
+  },
+  "devDependencies": {
+    "@playwright/test": "~1.57.0",
+    "@vitest/coverage-v8": "~3.2.3",
+    "rimraf": "~5.0.10",
+    "typescript": "~5.8.3",
+    "vitest": "~3.2.3",
+    "yaml": "~2.9.0",
+    "dotenv": "~17.4.2"
+  }
+}

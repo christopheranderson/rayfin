@@ -1,0 +1,52 @@
+{
+  "name": "@microsoft/rayfin-mcp",
+  "version": "1.36.2",
+  "description": "Rayfin Model Context Protocol tooling",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "raymcp": "scripts/main"
+  },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "dist/**/*.json",
+    "!dist/**/__tests__/**",
+    "scripts",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "@microsoft/rayfin-docs": "workspace:*",
+    "commander": "^12.1.0",
+    "fastmcp": "^3.29.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.10",
+    "eslint": "^9.28.0",
+    "prettier": "^3.5.3",
+    "rimraf": "~6.0.1",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.3",
+    "@vitest/coverage-v8": "~3.2.4"
+  },
+  "scripts": {
+    "start": "node scripts/main",
+    "build": "node build-scripts/generate-build-info && tsc",
+    "build:watch": "tsc --watch",
+    "clean": "rimraf dist .tsbuildinfo",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "dev": "fastmcp dev src/mcp.ts"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/microsoft/rayfin.git",
+    "directory": "packages/tools/mcp"
+  },
+  "license": "MIT"
+}

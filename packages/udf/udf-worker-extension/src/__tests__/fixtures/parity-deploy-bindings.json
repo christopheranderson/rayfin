@@ -1,0 +1,24 @@
+{
+  "audiences": {
+    "aliasedAudience": ["Sql"],
+    "literalUnion": ["ADO", "Sql"],
+    "aliasedNever": [],
+    "narrowedSecrets": ["Sql"],
+    "annotationAndArray": ["Sql", "Fabric"],
+    "noAudiences": [],
+    "namedContextParameter": ["Sql"],
+    "namedContextSortedUnion": ["ADO", "Sql"],
+    "businessOnly": []
+  },
+  "aliases": {
+    "aliasedAudience": [],
+    "literalUnion": [],
+    "aliasedNever": [],
+    "narrowedSecrets": [],
+    "annotationAndArray": ["myLakehouse"],
+    "noAudiences": [],
+    "namedContextParameter": [],
+    "namedContextSortedUnion": [],
+    "businessOnly": []
+  }
+}

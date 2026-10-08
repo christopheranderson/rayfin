@@ -1,0 +1,33 @@
+{
+  "name": "welcome-app-typescript",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "prebuild": "rayfin env --framework vite",
+    "dev": "rayfin dev",
+    "dev:frontend": "vite",
+    "dev:fabric": "vite",
+    "build": "tsc --build && vite build",
+    "build:fabric": "tsc -b && vite build",
+    "clean": "rimraf tsconfig.tsbuildinfo && rimraf rayfin/.temp/compiled"
+  },
+  "dependencies": {
+    "@microsoft/rayfin-client": "workspace:*",
+    "@microsoft/rayfin-core": "workspace:*",
+    "@microsoft/rayfin-data": "workspace:*",
+    "@microsoft/rayfin-lib": "workspace:*"
+  },
+  "devDependencies": {
+    "@microsoft/rayfin-cli": "workspace:*",
+    "@microsoft/rayfin-mcp": "workspace:*",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.8.3",
+    "vite": "^7.3.2"
+  },
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

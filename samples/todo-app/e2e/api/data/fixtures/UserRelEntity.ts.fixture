@@ -1,0 +1,15 @@
+import { entity, one, role, text, uuid } from '@microsoft/rayfin-core';
+import { User } from '@microsoft/rayfin-core';
+
+@entity()
+@role('authenticated', '*', {
+  policy: (claims, item) => claims.sub.eq(item.user_id),
+})
+export class UserRelEntity1 {
+  @uuid() id!: string;
+  @text() title!: string;
+
+  @one(() => User, { optional: true }) createdBy?: User;
+
+  @text() user_id!: string;
+}

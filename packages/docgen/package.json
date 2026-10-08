@@ -1,0 +1,34 @@
+{
+  "name": "@rayfin/docgen",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "npm run build:typedoc",
+    "build:dotnet": "npm run build:docfx && npm run build:dfmg",
+    "build:all": "npm run build:typedoc && npm run build:dotnet",
+    "build:typedoc": "typedoc",
+    "build:docfx": "dotnet tool restore && dotnet tool run docfx metadata",
+    "build:dfmg": "dotnet tool restore && dotnet tool run dfmg",
+    "clean": "rimraf .temp dist"
+  },
+  "devDependencies": {
+    "@microsoft/rayfin-auth": "workspace:*",
+    "@microsoft/rayfin-auth-provider-fabric": "workspace:*",
+    "@microsoft/rayfin-client": "workspace:*",
+    "@microsoft/rayfin-core": "workspace:*",
+    "@microsoft/rayfin-data": "workspace:*",
+    "@microsoft/rayfin-functions": "workspace:*",
+    "@microsoft/rayfin-lib": "workspace:*",
+    "@microsoft/rayfin-storage": "workspace:*",
+    "rimraf": "^5.0.0",
+    "typedoc": "^0.28.16",
+    "typedoc-plugin-markdown": "^4.9.0",
+    "typedoc-docusaurus-theme": "^1.4.2",
+    "typescript": "~5.6.2",
+    "typedoc-plugin-frontmatter": "^1.3.1"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "license": "MIT"
+}

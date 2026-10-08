@@ -1,0 +1,15 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "files": ["*/*.csproj"],
+          "src": "../host/"
+        }
+      ],
+      "disableGitFeatures": false,
+      "disableDefaultFilter": false,
+      "dest": ".temp/host"
+    }
+  ]
+}

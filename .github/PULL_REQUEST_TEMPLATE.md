@@ -1,21 +1,53 @@
-## Description
+# Description
 
-<!-- Brief summary of the change and motivation -->
+<!-- Describe your changes -->
 
-## Type of change
+## Types of Changes
 
-- [ ] Bug fix
-- [ ] New feature
-- [ ] Documentation update
-- [ ] Other
+<!-- Check the appropriate column for each surface area affected by this PR -->
+
+| Surface Area | Public | Experimental | Internal |
+| ------------ | ------ | ------------ | -------- |
+| CLI          | [ ]    | [ ]          | [ ]      |
+| Copilot plugin | [ ]    | [ ]          | [ ]      |
+| SDK          | [ ]    | [ ]          | [ ]      |
+| Templates    | [ ]    | [ ]          | [ ]      |
+| Docs         | [ ]    | [ ]          | [ ]      |
+| Container    | [ ]    | [ ]          | [ ]      |
+| Host         | [ ]    | [ ]          | [ ]      |
+
+- [ ] Spec only
+- [ ] Other:
+
+## Hotfix Needed
+
+<!-- If a hotfix is needed, specify which release(s). Otherwise, delete this section. -->
+
+- [ ] Hotfix needed
+- [ ] Release tags applied
 
 ## Checklist
 
-- [ ] I have read the [Contributing Guide](../CONTRIBUTING.md)
-- [ ] My changes follow the existing code style
-- [ ] I have tested my changes locally
-- [ ] I have updated documentation as needed
+<!-- Delete any sections that are not relevant to your change -->
 
-## AI disclosure
+### Public changes
 
-<!-- If AI tools assisted this contribution, briefly describe how -->
+- [ ] TypeDocs updated
+- [ ] Guide docs updated
+- [ ] AI files updated
+
+### Experimental changes
+
+- [ ] SDK changes: exported from experimental exports path only
+- [ ] CLI changes: gated behind feature flag
+- [ ] Documented only in experimental docs folder
+
+### Internal changes
+
+- [ ] TypeDocs marked as internal
+- [ ] SDK changes: exported from `_internal` exports path only
+- [ ] CLI: no public surface changes
+
+## Related Issues
+
+<!-- Link any related issues below (e.g., Fixes #123, Relates to #456) -->

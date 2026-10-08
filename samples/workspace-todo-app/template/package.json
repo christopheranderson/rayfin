@@ -1,0 +1,32 @@
+{
+  "name": "workspace-todo-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run -w @workspace-todo-app/shared build && npm run -w @workspace-todo-app/data build && npm run -w @workspace-todo-app/functions build && npm run -w @workspace-todo-app/frontend build",
+    "dev": "rayfin dev",
+    "dev:frontend": "npm run -w @workspace-todo-app/frontend dev"
+  },
+  "dependencies": {
+    "@microsoft/rayfin-auth-provider-fabric": "^1.34.0-alpha",
+    "@microsoft/rayfin-client": "^1.34.0-alpha",
+    "@microsoft/rayfin-core": "^1.34.0-alpha",
+    "@microsoft/rayfin-data": "^1.34.0-alpha",
+    "@microsoft/rayfin-functions": "^1.34.0-alpha",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1"
+  },
+  "devDependencies": {
+    "@microsoft/rayfin-cli": "^1.34.0-alpha",
+    "@types/node": "^20.4.2",
+    "@types/react": "~19.2.7",
+    "@types/react-dom": "~19.2.3",
+    "@vitejs/plugin-react": "^4.6.0",
+    "typescript": "^5.8.3",
+    "vite": "^7.3.2"
+  }
+}

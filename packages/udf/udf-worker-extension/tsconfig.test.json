@@ -1,0 +1,24 @@
+{
+  // The main tsconfig.json excludes `src/**/__tests__/**`, and ts-jest runs
+  // transpile-only because the shared base sets `isolatedModules: true` — so
+  // without this config nothing type-checks the test files.
+  //
+  // That matters more than usual here: several suites assert *compile-time*
+  // behaviour with `@ts-expect-error` (see connectionTypeSafety.test.ts). Those
+  // assertions are inert unless a real `tsc` pass reads them, because an
+  // `@ts-expect-error` that stops being necessary is reported as TS2578 —
+  // which is precisely how a regression in the audience-typing would surface.
+  //
+  // Wired into `npm run lint`.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "composite": false,
+    "incremental": false,
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["dist", "node_modules"]
+}

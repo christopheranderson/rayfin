@@ -1,0 +1,21 @@
+id: eshop
+name: eshop
+version: 1.0.11
+services:
+  auth:
+    enabled: true
+    password:
+      enabled: true
+    email:
+      enabled: false
+    customClaims:
+      tenant: default
+      app_version: 1.0.0
+    scopes:
+      - read:data
+      - write:data
+  data:
+    enabled: true
+    dialect: mssql
+  storage:
+    enabled: true

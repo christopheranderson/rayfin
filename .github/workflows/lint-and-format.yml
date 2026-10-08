@@ -1,0 +1,326 @@
+name: Lint & Format
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  lint-and-format-code:
+    name: Code Quality & Formatting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Node.js dependencies
+        run: |
+          echo "📦 Installing Node.js dependencies..."
+          node common/scripts/install-run-rush.js install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Environment validation
+        run: |
+          echo "✅ Workflow foundation complete"
+          echo "📋 Environment summary:"
+          echo "  - Node.js version: $(node --version)"
+          echo "  - npm version: $(npm --version)"
+          echo ""
+          echo "� Starting code quality checks..."
+
+      - name: Rush build (lint prerequisites)
+        run: |
+          echo "🏗️ Building packages so TypeDoc can resolve cross-package types during lint..."
+          node common/scripts/install-run-rush.js build
+
+      - name: Check ESLint
+        continue-on-error: true
+        id: eslint-check
+        run: |
+          echo "🔍 Running ESLint checks..."
+          if node common/scripts/install-run-rush.js lint:check; then
+            echo "✅ ESLint checks passed"
+          else
+            echo "❌ ESLint found issues - run 'rush lint' to auto-fix"
+            exit 1
+          fi
+
+      - name: Generate ESLint Fix Suggestions
+        if: ${{ steps.eslint-check.outcome == 'failure' }}
+        id: eslint-fix
+        run: |
+          set -eo pipefail
+          echo "🛠️ Attempting to auto-fix ESLint issues..."
+          npm run lint:fix || true
+          if git diff --quiet; then
+            echo "ℹ️ No automatic ESLint fixes generated"
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          else
+            git diff > eslint-fixes.patch
+            echo "✅ Generated ESLint fix suggestions"
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+            delimiter="EOF_ESLINT_FIX"
+            printf 'patch<<%s\n' "$delimiter" >> "$GITHUB_OUTPUT"
+            cat eslint-fixes.patch >> "$GITHUB_OUTPUT"
+            printf '%s\n' "$delimiter" >> "$GITHUB_OUTPUT"
+            git reset --hard HEAD
+          fi
+
+      - name: Check Prettier Formatting
+        continue-on-error: true
+        id: prettier-check
+        run: |
+          echo "🔍 Checking Prettier formatting..."
+          if node common/scripts/install-run-rush.js format:check; then
+            echo "✅ Prettier formatting passed"
+          else
+            echo "❌ Prettier formatting failed - run 'rush format' to fix"
+            exit 1
+          fi
+
+      - name: Generate Prettier Fix Suggestions
+        if: ${{ steps.prettier-check.outcome == 'failure' }}
+        id: prettier-fix
+        run: |
+          echo "🔍 Running Markdown linting..."
+          set -eo pipefail
+          echo "🛠️ Attempting to auto-fix Prettier formatting issues..."
+          node common/scripts/install-run-rush.js format
+          if git diff --quiet; then
+            echo "ℹ️ No automatic Prettier fixes generated"
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          else
+            git diff > prettier-fixes.patch
+            echo "✅ Generated Prettier fix suggestions"
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+            delimiter="EOF_PRETTIER_FIX"
+            printf 'patch<<%s\n' "$delimiter" >> "$GITHUB_OUTPUT"
+            cat prettier-fixes.patch >> "$GITHUB_OUTPUT"
+            printf '%s\n' "$delimiter" >> "$GITHUB_OUTPUT"
+            git reset --hard HEAD
+          fi
+
+      - name: Prepare Code Formatting Fix Suggestions Comment
+        id: prepare-code-formatting-comment
+        if: ${{ github.event_name == 'pull_request' && (steps.eslint-fix.outputs.has_changes == 'true' || steps.prettier-fix.outputs.has_changes == 'true') }}
+        uses: actions/github-script@v7
+        env:
+          ESLINT_PATCH: ${{ steps.eslint-fix.outputs.patch }}
+          ESLINT_HAS_CHANGES: ${{ steps.eslint-fix.outputs.has_changes }}
+          PRETTIER_PATCH: ${{ steps.prettier-fix.outputs.patch }}
+          PRETTIER_HAS_CHANGES: ${{ steps.prettier-fix.outputs.has_changes }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          result-encoding: string
+          script: |
+            const sections = [];
+
+            const addSection = (title, command, patchEnv, hasChangesEnv) => {
+              if (hasChangesEnv !== 'true' || !patchEnv) {
+                return;
+              }
+              sections.push([
+                `### ${title}`,
+                '',
+                `Run \`${command}\` locally or apply the patch below:`,
+                '~~~diff',
+                patchEnv,
+                '~~~'
+              ].join('\n'));
+            };
+
+            addSection('ESLint', 'npm run lint:fix', process.env.ESLINT_PATCH, process.env.ESLINT_HAS_CHANGES);
+            addSection('Prettier', 'npm run format', process.env.PRETTIER_PATCH, process.env.PRETTIER_HAS_CHANGES);
+
+            if (!sections.length) {
+              core.info('No code formatting suggestions to include.');
+              core.setOutput('has_message', 'false');
+              return '';
+            }
+
+            const summary = '⚠️ **Code quality checks failed** and automated fixes are available.';
+            const body = [
+              '<details>',
+              `<summary>${summary}</summary>`,
+              '',
+              ...sections,
+              '',
+              '_This comment was generated automatically; rerun the workflow after applying the fixes._',
+              '',
+              '</details>'
+            ].join('\n');
+
+            core.setOutput('message', body);
+            core.setOutput('has_message', 'true');
+            return body;
+
+      - name: Comment Code Formatting Fix Suggestions
+        if: ${{ github.event_name == 'pull_request' && steps.prepare-code-formatting-comment.outputs.has_message == 'true' }}
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: code
+          message: ${{ steps.prepare-code-formatting-comment.outputs.message }}
+
+      # Phase 3: Comprehensive Results Summary and Validation
+      - name: Validate All Checks
+        if: always()
+        run: |
+          echo "📊 Code Quality Check Results Summary"
+          echo "======================================"
+
+          # Initialize counters
+          passed=0
+          failed=0
+          total=2
+
+          # Check ESLint results
+          if [ "${{ steps.eslint-check.outcome }}" = "success" ]; then
+            echo "✅ ESLint: PASSED"
+            passed=$((passed + 1))
+          else
+            echo "❌ ESLint: FAILED"
+            failed=$((failed + 1))
+          fi
+
+          # Check Prettier results
+          if [ "${{ steps.prettier-check.outcome }}" = "success" ]; then
+            echo "✅ Prettier Formatting: PASSED"
+            passed=$((passed + 1))
+          else
+            echo "❌ Prettier Formatting: FAILED"
+            failed=$((failed + 1))
+          fi
+
+          echo ""
+          echo "Summary: $passed/$total checks passed"
+
+          if [ $failed -gt 0 ]; then
+            echo ""
+            echo "🚨 $failed code quality check(s) failed!"
+            echo "Please review the errors above and fix the issues."
+            echo ""
+            echo "Common fixes:"
+            echo "- ESLint issues: run 'npm run lint:fix'"
+            echo "- Prettier formatting: run 'npm run format'"
+            echo "- Markdown linting: check markdown files for style issues"
+            exit 1
+          else
+            echo ""
+            echo "🎉 All code quality checks passed!"
+          fi
+
+  lint-and-format-markdown:
+    name: Markdown Formatting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Node.js dependencies
+        run: |
+          echo "📦 Installing Node.js dependencies..."
+          node common/scripts/install-run-rush.js install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check Markdown Linting
+        continue-on-error: true
+        id: markdown-lint
+        run: |
+          echo "🔍 Running Markdown linting..."
+          if node common/scripts/install-run-rush.js docs:lint; then
+            echo "✅ Markdown linting passed"
+          else
+            echo "❌ Markdown linting failed - see output above for details for how to fix"
+            exit 1
+          fi
+
+      - name: Generate Markdown Fix Suggestions
+        if: ${{ steps.markdown-lint.outcome == 'failure' }}
+        id: markdown-fix
+        run: |
+          set -eo pipefail
+          echo "🛠️ Attempting to auto-fix markdown issues..."
+          node common/scripts/install-run-rush.js docs:lint --fix || true
+          if git diff --quiet; then
+            echo "ℹ️ No automatic markdown fixes generated"
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          else
+            git diff > markdown-fixes.patch
+            echo "✅ Generated markdown fix suggestions"
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+            delimiter="EOF_MARKDOWN_FIX"
+            printf 'patch<<%s\n' "$delimiter" >> "$GITHUB_OUTPUT"
+            cat markdown-fixes.patch >> "$GITHUB_OUTPUT"
+            printf '%s\n' "$delimiter" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Prepare Markdown Fix Suggestions Comment
+        id: prepare-markdown-comment
+        if: ${{ github.event_name == 'pull_request' && steps.markdown-lint.outcome == 'failure' && steps.markdown-fix.outputs.has_changes == 'true' }}
+        uses: actions/github-script@v7
+        env:
+          MARKDOWN_PATCH: ${{ steps.markdown-fix.outputs.patch }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          result-encoding: string
+          script: |
+            const patch = process.env.MARKDOWN_PATCH;
+            if (!patch) {
+              core.info('No patch content available to include.');
+              core.setOutput('has_message', 'false');
+              return '';
+            }
+            const body = [
+              '<details>',
+              '<summary>⚠️ **Markdown lint failed** and automatic fixes are available.</summary>',
+              '',
+              'Run `node common/scripts/install-run-rush.js docs:lint --fix` locally, or apply the following patch locally to resolve the issues:',
+              '~~~diff',
+              patch,
+              '~~~',
+              '',
+              '</details>'
+            ].join('\n');
+            core.setOutput('message', body);
+            core.setOutput('has_message', 'true');
+            return body;
+
+      - name: Comment Markdown Fix Suggestions
+        if: ${{ github.event_name == 'pull_request' && steps.prepare-markdown-comment.outputs.has_message == 'true' }}
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: markdown-lint
+          message: ${{ steps.prepare-markdown-comment.outputs.message }}
+
+      - name: Fail job when markdown lint fails
+        if: ${{ steps.markdown-lint.outcome == 'failure' }}
+        run: |
+          echo "🚨 Markdown lint still failing after suggestions."
+          exit 1
